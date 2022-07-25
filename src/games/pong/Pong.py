@@ -1,8 +1,8 @@
-from config import Colors, ControllerBitShifts
+from config import Colors
 from games.GameBase import GameBase
 from core.util.Player import Player
 from core.util.Vector2 import Vector2
-from GameController import GameController
+from core.GameController import GameController
 from core.rendering.renderer.RendererBase import RendererBase
 
 # Size of the cursor

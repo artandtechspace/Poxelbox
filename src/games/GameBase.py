@@ -1,6 +1,6 @@
 from core.rendering.renderer.RendererBase import RendererBase
 from core.util.Player import Player
-from GameController import GameController
+from core.GameController import GameController
 
 
 class GameBase:
