@@ -1,8 +1,8 @@
 from config import Colors
-from games.GameBase import GameBase
+from core.scenery.SceneBase import SceneBase
 from core.util.Player import Player
 from core.util.Vector2 import Vector2
-from core.GameController import GameController
+from core.scenery.SceneController import SceneController
 from core.rendering.renderer.RendererBase import RendererBase
 from config import ControllerKeys as Controller
 
@@ -23,7 +23,7 @@ def get_plr_color(p_id: int):
     return COLOR_P1 if p_id == 0 else COLOR_P2
 
 
-class Pong(GameBase):
+class PongScene(SceneBase):
     # Position and motion of the ball
     ball: Vector2
     ball_motion: Vector2 = Vector2(1, 1)
@@ -106,8 +106,8 @@ class Pong(GameBase):
             # Updates player position
             self.player_x[i] = nx
 
-    def init(self, game_controller: GameController, renderer: RendererBase, player_one: Player, player_two: Player):
-        super().init(game_controller, renderer, player_one, player_two)
+    def init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player, player_two: Player):
+        super().init(scene_controller, renderer, player_one, player_two)
 
         # Calculates and set init positions of all object
         self.ball = Vector2(self.renderer.screen.size_x / 2, self.renderer.screen.size_y / 2)

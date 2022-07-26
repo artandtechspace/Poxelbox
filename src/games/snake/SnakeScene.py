@@ -1,7 +1,7 @@
 from config import Colors
-from games.GameBase import GameBase
+from core.scenery.SceneBase import SceneBase
 from core.util.Player import Player
-from core.GameController import GameController
+from core.scenery.SceneController import SceneController
 from core.rendering.renderer.RendererBase import RendererBase
 from config import ControllerKeys as Controller
 from random import random
@@ -13,15 +13,15 @@ player_color = Colors.YELLOW
 player_start_length = 3
 
 
-class Snake(GameBase):
+class SnakeScene(SceneBase):
     pressed_button: int
     player_length: int
     player_head_pos: [int, int]
     player_body_pos: [(int, int)]
     berry_pos: [int, int]
 
-    def init(self, game_controller: GameController, renderer: RendererBase, player_one: Player, player_two: Player):
-        super().init(game_controller, renderer, player_one, player_two)
+    def init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player, player_two: Player):
+        super().init(scene_controller, renderer, player_one, player_two)
 
         self.restart()
 

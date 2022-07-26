@@ -7,8 +7,8 @@ PyGameRenderer_LED_PIXEL_SCALE = 60
 # Serial-Baud rate that the esp32 uses for the serial-userinput connection
 SerialEspUserInput_ESP_BAUD = 9600
 
-# General speed of the game. Default is normal 1
-Game_SPEED = 1
+# General speed of all scenes. Default is normal 1
+Scene_SPEED = 1
 
 # Key-mappings from pygame-keys to play-keys
 # Mappings for player one

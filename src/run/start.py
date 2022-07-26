@@ -1,8 +1,8 @@
-from core.GameController import GameController
+from core.scenery.SceneController import SceneController
 
 def start(renderer, userinput, game):
     # Creates game controller, prepares it and loads the game
-    ctrl = GameController(renderer, userinput)
+    ctrl = SceneController(renderer, userinput)
 
     renderer.setup()
 
