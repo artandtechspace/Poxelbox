@@ -46,7 +46,7 @@ class GameController:
     # Starts the game-loop and execution
     def run(self):
         # When the game-loop executed last
-        last_exec = time.clock_gettime(time.CLOCK_REALTIME) + self.game.get_time_constant() / TIME_MULTIPLIER
+        last_exec = time.perf_counter() + self.game.get_time_constant() / TIME_MULTIPLIER
 
         # Game loop
         while True:
@@ -54,7 +54,7 @@ class GameController:
             self.userinp.update()
 
             # Gets the current time in relation
-            clc_time = time.clock_gettime(time.CLOCK_REALTIME)
+            clc_time = time.perf_counter()
             # Updates the frame on time
             if last_exec - clc_time <= 0:
                 # Updates the time before any rendering is done
