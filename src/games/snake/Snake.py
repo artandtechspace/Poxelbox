@@ -3,7 +3,7 @@ from games.GameBase import GameBase
 from core.util.Player import Player
 from core.GameController import GameController
 from core.rendering.renderer.RendererBase import RendererBase
-from config import ControllerBitShifts as Controller
+from config import ControllerKeys as Controller
 from random import random
 
 # constants

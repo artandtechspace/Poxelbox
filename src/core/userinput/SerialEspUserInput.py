@@ -52,7 +52,7 @@ class SerialEspUserInput(BaseUserInput):
                     return
 
                 # Reads in the packet and executes the callback
-                self.__on_change(data[0] | (data[1] << 8))
+                self._on_change(data[0] | (data[1] << 8))
 
         except serial.serialutil.SerialException:
             # TODO: Change to full error that crashes the system

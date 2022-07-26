@@ -4,5 +4,10 @@ from core.rendering.Screen import Screen
 from run.start import start
 from games.snake.Snake import Snake
 from games.pong.Pong import Pong
+import pygame
+from core.userinput.PyGameUserInput import PyGameUserInput
 
-start(PyGameRenderer(Screen(18, 20)), DummyUserInput(), Pong())
+# Starts pygame
+pygame.init()
+
+start(PyGameRenderer(Screen(18, 20)), PyGameUserInput(), Pong())

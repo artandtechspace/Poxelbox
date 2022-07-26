@@ -9,9 +9,7 @@ class PyGameRenderer(RendererBase):
     __window = None
 
     def setup(self):
-        # Starts pygame and creates the window object
-        pygame.init()
-
+        # Creates the window object
         self.__window = pygame.display.set_mode((self.screen.size_x * PIXEL, self.screen.size_y * PIXEL))
 
     def set_led(self, x: int, y: int, color: (int, int, int)):

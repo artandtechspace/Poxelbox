@@ -4,7 +4,7 @@ from core.util.Player import Player
 from core.util.Vector2 import Vector2
 from core.GameController import GameController
 from core.rendering.renderer.RendererBase import RendererBase
-from config import ControllerBitShifts as Controller
+from config import ControllerKeys as Controller
 
 # Size of the cursor
 PLAYER_SIZE = 3
@@ -91,7 +91,7 @@ class Pong(GameBase):
             nx = self.player_x[i] + (-1 if button == Controller.BTN_LEFT else 1)
 
             # Checks if that position is off-screen
-            if nx <= 0 or nx + PLAYER_SIZE >= self.renderer.screen.size_x:
+            if nx < 0 or nx + PLAYER_SIZE >= self.renderer.screen.size_x:
                 return
 
             # Gets the pixel that must be removed and the one that must be redrawn
