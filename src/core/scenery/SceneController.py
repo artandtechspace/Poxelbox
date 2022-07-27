@@ -26,7 +26,7 @@ class SceneController:
         self.scene = next_scene
 
         # Init's the game
-        self.scene.init(self, self.rdr, self.players[0], self.players[1])
+        self.scene.on_init(self, self.rdr, self.players[0], self.players[1])
 
     # Executes when any users control's change
     def __on_raw_player_input(self, status: int):
@@ -66,6 +66,6 @@ class SceneController:
                 # Updates the time before any rendering is done
                 last_exec = clc_time + self.scene.get_time_constant() / TIME_MULTIPLIER
                 # Executes the scene loop
-                self.scene.update()
+                self.scene.on_update()
 
             time.sleep(0.05)

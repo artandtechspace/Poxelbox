@@ -1,7 +1,7 @@
 from config import Colors
 from core.scenery.SceneBase import SceneBase
 from core.util.Player import Player
-from core.util.Vector2 import Vector2
+from core.util.Vector2D import Vector2D
 from core.scenery.SceneController import SceneController
 from core.rendering.renderer.RendererBase import RendererBase
 from config import ControllerKeys as Controller
@@ -25,12 +25,12 @@ def get_plr_color(p_id: int):
 
 class PongScene(SceneBase):
     # Position and motion of the ball
-    ball: Vector2
-    ball_motion: Vector2 = Vector2(1, 1)
+    ball: Vector2D[float]
+    ball_motion: Vector2D[float] = Vector2D(1, 1)
 
     # Players x and y positions. First index for the first player, second for the second
-    player_y: [int, int]
-    player_x: [int, int]
+    player_y: Vector2D[int]
+    player_x: Vector2D[int]
 
     def get_time_constant(self):
         return .1
@@ -106,20 +106,20 @@ class PongScene(SceneBase):
             # Updates player position
             self.player_x[i] = nx
 
-    def init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player, player_two: Player):
-        super().init(scene_controller, renderer, player_one, player_two)
+    def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player, player_two: Player):
+        super().on_init(scene_controller, renderer, player_one, player_two)
 
         # Calculates and set init positions of all object
-        self.ball = Vector2(self.renderer.screen.size_x / 2, self.renderer.screen.size_y / 2)
-        self.player_y = [DIST_EDGE_Y, self.renderer.screen.size_y - DIST_EDGE_Y-1]
+        self.ball = Vector2D[float](self.renderer.screen.size_x / 2, self.renderer.screen.size_y / 2)
+        self.player_y = Vector2D[int](DIST_EDGE_Y, self.renderer.screen.size_y - DIST_EDGE_Y-1)
         pos_x = int(self.renderer.screen.size_x / 2 - PLAYER_SIZE / 2)
-        self.player_x = [pos_x, pos_x]
+        self.player_x = Vector2D[int](pos_x, pos_x)
 
         # Renders both players fully for the first time
         for i in range(2):
-            self.renderer.fill(self.player_x[i], int(self.player_y[i]), PLAYER_SIZE + 1, 1, get_plr_color(i))
+            self.renderer.fill(self.player_x[i], self.player_y[i], PLAYER_SIZE + 1, 1, get_plr_color(i))
         self.renderer.push_leds()
 
-    def update(self):
+    def on_update(self):
         self.update_ball()
         self.renderer.push_leds()

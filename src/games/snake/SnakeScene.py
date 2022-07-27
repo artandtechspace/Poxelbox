@@ -5,36 +5,35 @@ from core.scenery.SceneController import SceneController
 from core.rendering.renderer.RendererBase import RendererBase
 from config import ControllerKeys as Controller
 from random import random
+from core.util.Vector2D import Vector2D
 
-# constants
-field_color = Colors.OFF
-berry_color = Colors.MAGENTA
-player_color = Colors.YELLOW
-player_start_length = 3
+BACKGROUND_COLOR = Colors.OFF
+BERRY_COLOR = Colors.MAGENTA
+PLAYER_COLOR = Colors.YELLOW
+PLAYER_START_LENGTH = 3
 
 
 class SnakeScene(SceneBase):
     pressed_button: int
     player_length: int
-    player_head_pos: [int, int]
-    player_body_pos: [(int, int)]
-    berry_pos: [int, int]
+    player_head_pos: Vector2D[int]
+    player_body_pos: [Vector2D[int]]
+    berry_pos: Vector2D[int]
 
-    def init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player, player_two: Player):
-        super().init(scene_controller, renderer, player_one, player_two)
+    def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player, player_two: Player):
+        super().on_init(scene_controller, renderer, player_one, player_two)
 
         self.restart()
 
     def restart(self):
         self.pressed_button = Controller.BTN_UP
-        self.player_length = player_start_length
-        self.player_head_pos = [int(self.renderer.screen.size_x/2), int(self.renderer.screen.size_y/2)]
-        self.player_body_pos = [(self.player_head_pos[0], self.player_head_pos[1])]
+        self.player_length = PLAYER_START_LENGTH
+        self.player_head_pos = Vector2D[int](int(self.renderer.screen.size_x / 2), int(self.renderer.screen.size_y / 2))
+        self.player_body_pos = [self.player_head_pos.copy()]
 
         # paints the window
-        for i in range(self.renderer.screen.size_x):
-            for j in range(self.renderer.screen.size_y):
-                self.renderer.fill(i, j, 1, 1, field_color)
+        self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, BACKGROUND_COLOR)
+
         # first sets the berry
         self.find_new_berry()
         # fist draws the player
@@ -45,24 +44,32 @@ class SnakeScene(SceneBase):
         self.renderer.push_leds()
 
     def draw_player(self):
-        self.renderer.fill((self.player_head_pos[0]), (self.player_head_pos[1]), 1, 1, player_color)
+        self.renderer.set_led(self.player_head_pos.x, self.player_head_pos.y, PLAYER_COLOR)
         self.player_body_pos.append(self.player_head_pos.copy())
 
     def erase_player(self):
         player_tail_pos = self.player_body_pos[0]
         length_difference = self.player_length - len(self.player_body_pos)
         if length_difference <= 0:
-            self.renderer.fill((player_tail_pos[0]), (player_tail_pos[1]), 1, 1, field_color)
+            self.renderer.set_led_vector(player_tail_pos, BACKGROUND_COLOR)
             self.player_body_pos.pop(0)
         elif length_difference > 0:
             pass
 
+    # Returns if the players body occupies the given x/y position
+    def does_player_occupy_position(self, x, y):
+        # Iterates over every body position and checks the coords
+        for vec in self.player_body_pos:
+            if vec.x == x and vec.y == y:
+                return True
+        return False
+
     def find_new_berry(self):
-        possible_positions = [[]]
+        possible_positions = [Vector2D[int]]
         for x in range(self.renderer.screen.size_x):
             for y in range(self.renderer.screen.size_y):
-                if not [x, y] in self.player_body_pos:
-                    possible_positions.append((x, y))
+                if not self.does_player_occupy_position(x, y):
+                    possible_positions.append(Vector2D[int](x, y))
         possible_positions.pop(0)
         if len(possible_positions) == 0:
             # player is in every pixel
@@ -70,8 +77,8 @@ class SnakeScene(SceneBase):
             pass
         else:
             picked_position = int(random()*len(possible_positions))
-            self.berry_pos = [possible_positions[picked_position][0], possible_positions[picked_position][1]]
-            self.renderer.fill((self.berry_pos[0]), (self.berry_pos[1]), 1, 1, berry_color)
+            self.berry_pos = possible_positions[picked_position]
+            self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
 
     def won_screen(self):
         # TODO make a proper win screen
@@ -87,6 +94,7 @@ class SnakeScene(SceneBase):
             self.find_new_berry()
 
     def game_over(self):
+        # TODO: Refactor @Anton
         smaller_window_side = self.renderer.screen.size_x if self.renderer.screen.size_x <= self.renderer.screen.size_y else self.renderer.screen.size_y
         ray_y = lambda h: (h*self.renderer.screen.size_y/smaller_window_side)  # * 1 + self.start_pos[1]
         for i in range(smaller_window_side):
@@ -96,43 +104,47 @@ class SnakeScene(SceneBase):
         self.restart()
 
     def collision_detection_self(self):
-        if self.player_head_pos in self.player_body_pos:
-            return True
-        else:
-            return False
+        return self.does_player_occupy_position(self.player_head_pos.x, self.player_head_pos.y)
 
-    def move(self, button: int):
-        if button == Controller.BTN_UP:
-            if self.player_head_pos[1] > 0:
+    def get_time_constant(self):
+        return .1
+
+    def on_player_input(self, player: Player, button: int, status: bool):
+        if status:
+            self.pressed_button = button
+
+    def on_update(self):
+        if self.pressed_button == Controller.BTN_DOWN:
+            if self.player_head_pos.y > 0:
                 self.erase_player()
-                self.player_head_pos[1] -= 1
+                self.player_head_pos.y -= 1
                 if self.collision_detection_self():
                     self.game_over()
                 self.draw_player()
             else:  # must be outside the borders
                 self.game_over()
-        elif button == Controller.BTN_DOWN:
-            if self.player_head_pos[1] + 1 < self.renderer.screen.size_y:
+        elif self.pressed_button == Controller.BTN_UP:
+            if self.player_head_pos.y + 1 < self.renderer.screen.size_y:
                 self.erase_player()
-                self.player_head_pos[1] += 1
+                self.player_head_pos.y += 1
                 if self.collision_detection_self():
                     self.game_over()
                 self.draw_player()
             else:  # must be outside the borders
                 self.game_over()
-        elif button == Controller.BTN_LEFT:
-            if self.player_head_pos[0] > 0:
+        elif self.pressed_button == Controller.BTN_LEFT:
+            if self.player_head_pos.x > 0:
                 self.erase_player()
-                self.player_head_pos[0] -= 1
+                self.player_head_pos.x -= 1
                 if self.collision_detection_self():
                     self.game_over()
                 self.draw_player()
             else:  # must be outside the borders
                 self.game_over()
-        elif button == Controller.BTN_RIGHT:
-            if self.player_head_pos[0] + 1 < self.renderer.screen.size_x:
+        elif self.pressed_button == Controller.BTN_RIGHT:
+            if self.player_head_pos.x + 1 < self.renderer.screen.size_x:
                 self.erase_player()
-                self.player_head_pos[0] += 1
+                self.player_head_pos.x += 1
                 if self.collision_detection_self():
                     self.game_over()
                 self.draw_player()
@@ -140,19 +152,4 @@ class SnakeScene(SceneBase):
                 self.game_over()
         self.berry_mechanics()
         self.update_screen()
-
-    def get_time_constant(self):
-        return .1
-    # wie schnell update ausgefürd werden soll
-
-    def on_player_input(self, player: Player, button: int, status: bool):
-        if status:
-            self.pressed_button = button
         pass
-        # get executed when the player presses a button
-
-    def update(self):
-        self.move(self.pressed_button)
-        pass
-        # get executed every frame
-        # game loop

@@ -1,7 +1,7 @@
 import pygame
 import config.ControllerKeys as Keys
 
-# How many screen-pixel one poxel-pixel takes up on the pygame-renderer
+# How many screen -pixel one poxel-pixel takes up on the pygame-renderer
 PyGameRenderer_LED_PIXEL_SCALE = 60
 
 # Serial-Baud rate that the esp32 uses for the serial-userinput connection

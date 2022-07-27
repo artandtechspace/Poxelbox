@@ -10,4 +10,4 @@ from core.userinput.PyGameUserInput import PyGameUserInput
 # Starts pygame
 pygame.init()
 
-start(PyGameRenderer(Screen(18, 20)), PyGameUserInput(), PongScene())
+start(PyGameRenderer(Screen(18, 20)), PyGameUserInput(), SnakeScene())
