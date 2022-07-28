@@ -1,8 +1,32 @@
 import pygame
 from core.userinput.BaseUserInput import BaseUserInput
 import sys
-from config.Config import PyGameUserInput_KEY_MAPPINGS_P1 as KEY_MAPPINGS_P1
-from config.Config import PyGameUserInput_KEY_MAPPINGS_P2 as KEY_MAPPINGS_P2
+import config.ControllerKeys as Keys
+
+# Mappings for player one
+KEY_MAPPINGS_P1 = {
+    pygame.K_c: Keys.BTN_A,
+    pygame.K_v: Keys.BTN_B,
+    pygame.K_a: Keys.BTN_LEFT,
+    pygame.K_w: Keys.BTN_UP,
+    pygame.K_d: Keys.BTN_RIGHT,
+    pygame.K_s: Keys.BTN_DOWN,
+    pygame.K_t: Keys.BTN_SELECT,
+    pygame.K_z: Keys.BTN_START
+}
+
+# Mappings for player two
+KEY_MAPPINGS_P2 = {
+    pygame.K_k: Keys.BTN_A,
+    pygame.K_l: Keys.BTN_B,
+    pygame.K_LEFT: Keys.BTN_LEFT,
+    pygame.K_UP: Keys.BTN_UP,
+    pygame.K_RIGHT: Keys.BTN_RIGHT,
+    pygame.K_DOWN: Keys.BTN_DOWN,
+    pygame.K_o: Keys.BTN_SELECT,
+    pygame.K_p: Keys.BTN_START
+}
+
 
 class PyGameUserInput(BaseUserInput):
     p1_status = 0b000000000  # Keystatus and playerid of player 1

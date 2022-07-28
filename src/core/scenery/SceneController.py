@@ -2,7 +2,7 @@ import time
 from core.util.Player import Player
 from core.rendering.renderer.RendererBase import RendererBase
 from core.userinput.BaseUserInput import BaseUserInput
-from config.Config import Scene_SPEED as TIME_MULTIPLIER
+import config.Config as Cfg
 
 class SceneController:
     # Players that are interacting with the scene
@@ -52,7 +52,7 @@ class SceneController:
     # Starts the scene-loop and execution
     def run(self):
         # When the scene-loop executed last
-        last_exec = time.perf_counter() + self.scene.get_time_constant() / TIME_MULTIPLIER
+        last_exec = time.perf_counter() + self.scene.get_time_constant() / Cfg.APP_SPEED
 
         # Game loop
         while True:
@@ -64,7 +64,7 @@ class SceneController:
             # Updates the frame on time
             if last_exec - clc_time <= 0:
                 # Updates the time before any rendering is done
-                last_exec = clc_time + self.scene.get_time_constant() / TIME_MULTIPLIER
+                last_exec = clc_time + self.scene.get_time_constant() / Cfg.APP_SPEED
                 # Executes the scene loop
                 self.scene.on_update()
 
