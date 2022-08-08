@@ -1,4 +1,6 @@
 import pygame
+
+import Program
 from core.userinput.BaseUserInput import BaseUserInput
 import sys
 import config.ControllerKeys as Keys
@@ -39,7 +41,7 @@ class PyGameUserInput(BaseUserInput):
             # Checks for the window-close-event
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()
+                Program.stop()
 
             # Checks if the pressed key conforms to the mappings
             if event.type in [pygame.KEYUP, pygame.KEYDOWN] and (

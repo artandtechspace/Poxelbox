@@ -1,22 +1,42 @@
-from config.core.types.BaseVarLoader import BaseVarLoader
+import config.core.types.BaseVarLoader as BaseVL
+import config.core.ConfigLoader as CfgLdr
 
+class IntPresetVLBuilder(BaseVL.BaseVLBuilder):
 
-class IntPresetVarLoader(BaseVarLoader):
+    __presets: [int]
+
+    def __init__(self, back_ref: CfgLdr.CategoryBuilder, var_name: str, presets: [int]):
+        super().__init__(back_ref, var_name)
+
+        self.__presets = presets
+
+    def export_end(self):
+        return IntPresetVarLoader(self._var_name, self._title, self._description, self.__presets)
+
+class IntPresetVarLoader(BaseVL.BaseVarLoader):
 
     presets: [int]
 
-    def __init__(self, var_name: str, presets: [int] = None):
-        super().__init__(var_name)
+    def __init__(self, var_name: str, title: str = None, description: str = None, presets: [int] = None):
+        super().__init__(var_name, title, description)
 
         self.presets = presets
+
+    def get_type(self):
+        return "int_preset"
+
+    def export_full(self):
+        return super().export_full() | {
+            "presets": self.presets
+        }
 
     def from_json(self, new_value):
         # Checks type
         if not isinstance(new_value, int):
-            return
+            return False
 
         # Ensures that the element is valid (Contained inside the list)
         if new_value not in self.presets:
-            return
+            return False
 
-        super().from_json(new_value)
+        return super().from_json(new_value)

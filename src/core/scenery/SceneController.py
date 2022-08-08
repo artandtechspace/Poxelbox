@@ -22,7 +22,7 @@ class SceneController:
         self.userinp = userinput
 
     # Used to open a new scene
-    def load_game(self, next_scene):
+    def load_scene(self, next_scene):
         self.scene = next_scene
 
         # Init's the game

@@ -1,11 +1,31 @@
 import config.Config as Cfg
-from config.core.ConfigLoader import ConfigLoader
+import config.core.ConfigLoader as CfgLdr
 from varname import nameof
 
 
 # Event: When the config-loaders are registered
 def register_on_loader():
-    return ConfigLoader() \
-        .register_int(nameof(Cfg.APP_SPEED), min=1, max=10) \
-        .register_int(nameof(Cfg.LED_PIXEL_SCALE), min=5)\
-        .register_int_preset(nameof(Cfg.ESP_BAUD), [115200, 9600])
+    return CfgLdr.ConfigLoaderBuilder()\
+        \
+        .in_category("Settings")\
+        \
+        .with_int(nameof(Cfg.APP_SPEED))\
+        .has_min(1).has_max(10)\
+        .has_title("Game-Speed")\
+        .has_description("How fast the game is running")\
+        .and_then()\
+        \
+        .with_int(nameof(Cfg.LED_PIXEL_SCALE))\
+        .has_min(5)\
+        .has_max(100)\
+        .has_title("PyGame-Pixel-Scale")\
+        .has_description("How many Screen-Pixel one Game-Pixel uses")\
+        .and_then()\
+        \
+        .with_int_preset(nameof(Cfg.ESP_BAUD), [115200, 9600])\
+        .has_title("Esp-Baud")\
+        .has_description("Baud-rate that is used to communicate with the Esp32")\
+        .and_then()\
+        \
+        .end_category()\
+        .build()

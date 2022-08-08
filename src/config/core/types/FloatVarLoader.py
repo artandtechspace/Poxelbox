@@ -1,21 +1,49 @@
-from config.core.types.BaseVarLoader import BaseVarLoader
+import config.core.types.BaseVarLoader as BaseVL
+import config.core.ConfigLoader as CfgLdr
 
 
-class FloatVarLoader(BaseVarLoader):
+class FloatVLBuilder(BaseVL.BaseVLBuilder):
+    __min: float
+    __max: float
 
-    min: int
-    max: int
+    def __init__(self, back_ref: CfgLdr.CategoryBuilder, var_name: str):
+        super().__init__(back_ref, var_name)
 
-    def __init__(self, var_name: str, min: int=None, max: int=None):
-        super().__init__(var_name)
+    def has_min(self, min: float):
+        self.__min = min
+        return self
+
+    def has_max(self, max: float):
+        self.__max = max
+        return self
+
+    def export_end(self):
+        return FloatVarLoader(self._var_name, self._title, self._description, self.__min, self.__max)
+
+
+class FloatVarLoader(BaseVL.BaseVarLoader):
+    min: float
+    max: float
+
+    def __init__(self, var_name: str, title: str = None, description: str = None, min: float = None, max: float = None):
+        super().__init__(var_name, title, description)
 
         self.min = min
         self.max = max
 
+    def get_type(self):
+        return "float"
+
+    def export_full(self):
+        return super().export_full() | {
+            "min": self.min,
+            "max": self.max
+        }
+
     def from_json(self, new_value):
         # Checks type
         if not isinstance(new_value, float):
-            return
+            return False
 
         # Checks min
         if self.min is not None and new_value < self.min:
@@ -25,4 +53,4 @@ class FloatVarLoader(BaseVarLoader):
         if self.max is not None and new_value > self.max:
             new_value = self.max
 
-        super().from_json(new_value)
+        return super().from_json(new_value)
