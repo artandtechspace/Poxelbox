@@ -12,6 +12,8 @@ BERRY_COLOR = Colors.MAGENTA
 PLAYER_COLOR = Colors.YELLOW
 PLAYER_START_LENGTH = 3
 
+# Control-pad-buttons
+CONTROLL_PAD_BUTTONS = [Controller.BTN_RIGHT, Controller.BTN_LEFT, Controller.BTN_UP, Controller.BTN_DOWN]
 
 class SnakeScene(SceneBase):
     pressed_button: int
@@ -110,7 +112,7 @@ class SnakeScene(SceneBase):
         return .1
 
     def on_player_input(self, player: Player, button: int, status: bool):
-        if status:
+        if status and button in CONTROLL_PAD_BUTTONS:
             self.pressed_button = button
 
     def on_update(self):
