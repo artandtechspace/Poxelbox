@@ -26,7 +26,7 @@ class SerialEspUserInput(BaseUserInput):
         if len(ports) != 1:
             # TODO: Change to full error that crashes the system
             raise InputError(
-                "Es wurden " + str(len(ports)) + " gefunden. Bitte schließe mindestens bzw. nur ein Gerät an.")
+                "Es wurden " + str(len(ports)) + " COM-ports gefunden. Bitte schließe mindestens bzw. nur ein Gerät an.")
 
         # Opens the serial-connection
         self.__ser = serial.Serial(ports[0], Config.ESP_BAUD)
