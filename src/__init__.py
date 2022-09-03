@@ -1,4 +1,5 @@
-# from run.runOnPi import start
-from run.runLocal import start
+import run.runLocal
+#import run.runOnPi
 
-start()
+run.runLocal.start()
+#run.runOnPi.start()
