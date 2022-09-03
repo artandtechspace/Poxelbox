@@ -12,7 +12,7 @@ class SceneController:
     rdr: RendererBase
 
     # Selected scene
-    scene: any               # TODO: Declaired as any to avoid circular import
+    scene: any               # NOTE: Declaired as any to avoid circular import
 
     # User-input method
     userinp: BaseUserInput

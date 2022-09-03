@@ -13,7 +13,8 @@ PLAYER_COLOR = Colors.YELLOW
 PLAYER_START_LENGTH = 3
 
 # Control-pad-buttons
-CONTROLL_PAD_BUTTONS = [Controller.BTN_RIGHT, Controller.BTN_LEFT, Controller.BTN_UP, Controller.BTN_DOWN]
+CONTROL_PAD_BUTTONS = [Controller.BTN_RIGHT, Controller.BTN_LEFT, Controller.BTN_UP, Controller.BTN_DOWN]
+
 
 class SnakeScene(SceneBase):
     pressed_button: int
@@ -22,7 +23,8 @@ class SnakeScene(SceneBase):
     player_body_pos: [Vector2D[int]]
     berry_pos: Vector2D[int]
 
-    def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player, player_two: Player):
+    def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
+                player_two: Player):
         super().on_init(scene_controller, renderer, player_one, player_two)
 
         self.restart()
@@ -78,7 +80,7 @@ class SnakeScene(SceneBase):
             self.won_screen()
             pass
         else:
-            picked_position = int(random()*len(possible_positions))
+            picked_position = int(random() * len(possible_positions))
             self.berry_pos = possible_positions[picked_position]
             self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
 
@@ -98,10 +100,10 @@ class SnakeScene(SceneBase):
     def game_over(self):
         # TODO: Refactor @Anton
         smaller_window_side = self.renderer.screen.size_x if self.renderer.screen.size_x <= self.renderer.screen.size_y else self.renderer.screen.size_y
-        ray_y = lambda h: (h*self.renderer.screen.size_y/smaller_window_side)  # * 1 + self.start_pos[1]
+        ray_y = lambda h: (h * self.renderer.screen.size_y / smaller_window_side)  # * 1 + self.start_pos[1]
         for i in range(smaller_window_side):
             self.renderer.fill(i, ray_y(i), 1, 1, (255, 0, 0))
-            self.renderer.fill((self.renderer.screen.size_x-1-i), ray_y(i), 1, 1, (255, 0, 0))
+            self.renderer.fill((self.renderer.screen.size_x - 1 - i), ray_y(i), 1, 1, (255, 0, 0))
         self.update_screen()
         self.restart()
 
@@ -112,7 +114,7 @@ class SnakeScene(SceneBase):
         return .1
 
     def on_player_input(self, player: Player, button: int, status: bool):
-        if status and button in CONTROLL_PAD_BUTTONS:
+        if status and button in CONTROL_PAD_BUTTONS:
             self.pressed_button = button
 
     def on_update(self):

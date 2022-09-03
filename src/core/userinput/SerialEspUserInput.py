@@ -13,7 +13,7 @@ class SerialEspUserInput(BaseUserInput):
 
     # Returns all usb-ports with connected devices
     def __get_ports(self):
-        # TODO: Note that this only works on Linux (Raspberry Pi)
+        # Note: that this only works on Linux (Raspberry Pi)
         return glob.glob("/dev/ttyUSB*")
 
     # Opens the port
@@ -24,9 +24,9 @@ class SerialEspUserInput(BaseUserInput):
 
         # Ensures only one device got detected
         if len(ports) != 1:
-            # TODO: Change to full error that crashes the system
             raise InputError(
-                "Es wurden " + str(len(ports)) + " COM-ports gefunden. Bitte schließe mindestens bzw. nur ein Gerät an.")
+                "We found " + str(
+                    len(ports)) + " COM-ports. Please connect only or at least one device, the esp.")
 
         # Opens the serial-connection
         self.__ser = serial.Serial(ports[0], Config.ESP_BAUD)
@@ -54,7 +54,6 @@ class SerialEspUserInput(BaseUserInput):
                 # Reads in the packet and executes the callback
                 self._on_change(data[0] | (data[1] << 8))
 
-        except serial.serialutil.SerialException:
-            # TODO: Change to full error that crashes the system
-            print("Serial-port error. Retrying on next run...")
+        except:
+            print("Serial-port error. Retrying in a moment...")
             time.sleep(1)
