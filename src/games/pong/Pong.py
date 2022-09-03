@@ -4,6 +4,7 @@ from core.util.Player import Player
 from core.util.Vector2 import Vector2
 from core.GameController import GameController
 from core.rendering.renderer.RendererBase import RendererBase
+from config import ControllerBitShifts as Controller
 
 # Size of the cursor
 PLAYER_SIZE = 3
@@ -14,7 +15,7 @@ COLOR_P2 = Colors.RED
 COLOR_BALL = Colors.GREEN
 
 # Distance from both edges
-DIST_EDGE_Y = 2
+DIST_EDGE_Y = 0
 
 
 # Returns the color of the given player
@@ -110,7 +111,7 @@ class Pong(GameBase):
 
         # Calculates and set init positions of all object
         self.ball = Vector2(self.renderer.screen.size_x / 2, self.renderer.screen.size_y / 2)
-        self.player_y = [DIST_EDGE_Y, self.renderer.screen.size_y - DIST_EDGE_Y]
+        self.player_y = [DIST_EDGE_Y, self.renderer.screen.size_y - DIST_EDGE_Y-1]
         pos_x = int(self.renderer.screen.size_x / 2 - PLAYER_SIZE / 2)
         self.player_x = [pos_x, pos_x]
 

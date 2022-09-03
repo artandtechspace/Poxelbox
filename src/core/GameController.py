@@ -34,7 +34,6 @@ class GameController:
     # Must be executed before the run-method is executed. Prepares the pi for rendering and other stuff
     def prepare(self):
         # Init's all stuff
-        self.rdr.setup()
         self.players[0].init(0, self.__on_player_input)
         self.players[1].init(1, self.__on_player_input)
         self.userinp.start(self.__on_raw_player_input)
