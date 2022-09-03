@@ -1,12 +1,14 @@
+import time
+
 from config import Colors
-from games.GameBase import GameBase
 from core.util.Player import Player
-from core.GameController import GameController
 from core.rendering.renderer.RendererBase import RendererBase
-from config import ControllerBitShifts as Controller
-from core.util.Vector2 import Vector2
+from config import ControllerKeys as Controller
+from core.util.Vector2D import Vector2D
 import random
 from numpy import array
+from core.scenery.SceneBase import SceneBase
+from core.scenery.SceneController import SceneController
 
 """
 A and B button to rotate blocks
@@ -47,7 +49,6 @@ class Shape:
 
 
 # Predefined shapes for the tetris blocks (With their colors)
-# TODO set relative coordinates with the fixed rotating pixel as origin
 DEFINED_SHAPES = (
     Shape([[0, 0], [1, 0], [0, -1], [1, -1]], O_block_color),
     Shape([[-1, 0], [0, 0], [1, 0], [2, 0]], I_block_color),
@@ -58,186 +59,15 @@ DEFINED_SHAPES = (
     Shape([[-1, 0], [0, 0], [0, -1], [1, 0]], T_block_color),
 )
 
-'''
-class Block:
-    block_id: int
-    rotation: int
-    relative_coordinates: [[int, int]]
-    blocks: [[[int, int]]]  # no block, no coordinate, x or y
-
-    def __init__(self, block_id: int):
-        self.block_id = block_id
-        self.rotation = 0
-        self.blocks = [[[0, 0], [1, 0], [0, -1], [1, -1]],      # O-block
-                       [[-1, 0], [0, 0], [1, 0], [2, 0]],       # I-block
-                       [[-1, -1], [-1, 0], [0, 0], [1, 0]],     # J-block
-                       [[-1, 0], [0, 0], [1, 0], [1, -1]],      # L-block
-                       [[-1, 0], [0, 0], [0, -1], [1, -1]],     # S-block
-                       [[-1, -1], [0, -1], [0, 0], [1, 0]],     # Z-block
-                       [[-1, 0], [0, 0], [0, -1], [1, 0]]]      # T-block
-        self.relative_coordinates = self.blocks[self.block_id]
-
-    def rotate(self, turning: int):
-        # changes the rotation
-        self.rotation += turning
-        if self.rotation < 0:
-            self.rotation = 3
-        if self.rotation > 3:
-            self.rotation = 0
-        # fist resets the relative coordinates
-        self.relative_coordinates = self.blocks[self.block_id]
-        # changes the relative coordinates
-        if self.rotation == 1:
-            # flips to the ... by replacing the x coordinate with the y coordinate
-            for i in range(len(self.relative_coordinates)):
-                t_coordinate = self.relative_coordinates[i][0]
-                self.relative_coordinates[i][0] = self.relative_coordinates[i][1]
-                self.relative_coordinates[i][1] = t_coordinate
-        if self.rotation == 2:
-            # mirrors the block by inverting the y-axis
-            for i in range(len(self.relative_coordinates)):
-                self.relative_coordinates[i][1] = -self.relative_coordinates[i][1]
-        if self.rotation == 3:
-            # flips to the ... by replacing the y coordinate with the x coordinate
-            for i in range(len(self.relative_coordinates)):
-                t_coordinate = self.relative_coordinates[i][1]
-                self.relative_coordinates[i][1] = self.relative_coordinates[i][0]
-                self.relative_coordinates[i][0] = t_coordinate
-
-    def get_relative_coordinates(self):
-        return self.relative_coordinates
-
-    def get_color(self):
-        return block_colors[self.block_id]
-
-    def get_shadow_color(self):
-        return foreshadow_block_colors[self.block_id]
-
-
-class Tetris(GameBase):
-    game_field: [[int]]  # not empty = color, from number of block
-    number_blocks_placed: int  # to set the game speed
-    current_block: Block
-    current_block_position: [int, int]
-
-    def init(self, game_controller: GameController, renderer: RendererBase, player_one: Player, player_two: Player):
-        super().init(game_controller, renderer, player_one, player_two)
-
-        self.reset()
-
-    def reset(self):
-        self.game_field = [[-1] * self.renderer.screen.size_x] * self.renderer.screen.size_y
-        self.number_blocks_placed = 0
-        self.find_new_block()
-
-    def get_time_constant(self):
-        return 0.1
-        # gets called every update frame
-
-    def update(self):
-        self.current_block_position[1] += 1
-        if self.check_block_hitting_ground():
-            self.place_block()
-            self.find_new_block()
-            if self.get_full_rows():  # get_full_rows returns a not empty list -> a row must be full
-                self.delete_full_rows()
-        self.cast_foreshadow()
-
-    def on_player_input(self, player: Player, button: int, status: bool):
-        pass
-
-    def find_new_block(self):
-        self.current_block = Block(random.randint(0, 6))
-        self.current_block_position = [int(self.renderer.screen.size_x/2),0]
-
-    def get_touching_high(self):
-        # saves the relative coordinates to shorten the code
-        relative_coordinates = self.current_block.get_relative_coordinates()
-        # gets the x-coordinates of the current block
-        current_x_positions = []
-        for j in range(len(relative_coordinates)):
-            if self.current_block_position[0] + relative_coordinates[j][0] not in current_x_positions:
-                current_x_positions.append(self.current_block_position[0] + relative_coordinates[j][0])
-        # checks from the ground up for collisions, returns the first high were none were found
-        for y in range(self.renderer.screen.size_y - self.current_block_position[1]):
-            check_high = self.renderer.screen.size_y - y
-            found_blocks = False
-            for x in current_x_positions:
-                if self.game_field[x][check_high] != -1:
-                    found_blocks = True
-            if not found_blocks:
-                return check_high
-        # returns -1 if there is no empty space found
-        return -1
-
-    def cast_foreshadow(self):
-        # gets the touching high
-        touching_high = self.get_touching_high()
-        if touching_high == -1:
-            raise Exception("found no empty space for the foreshadow")
-        # draws the current block at the touching high with its shadow color
-        for relative_block_coordinate in self.current_block.get_relative_coordinates():
-            self.renderer.set_led(self.current_block_position[0] + relative_block_coordinate[0],
-                                  touching_high + relative_block_coordinate[1],
-                                  self.current_block.get_shadow_color())
-
-    def check_block_hitting_ground(self):
-        return self.get_touching_high() == self.current_block_position[1]
-
-    def place_block(self):
-        # increases the number of blocks placed
-        self.number_blocks_placed += 1
-        # gets the touching high
-        touching_high = self.get_touching_high()
-        if touching_high == -1:
-            raise Exception("found no empty space for the foreshadow")
-        # sets the block position to the ground
-        self.current_block_position[0] = touching_high
-        # draws the current block at the touching high and adds it to the game field
-        for relative_block_coordinate in self.current_block.get_relative_coordinates():
-            x = self.current_block_position[0] + relative_block_coordinate[0]
-            y = self.current_block_position[0] + relative_block_coordinate[1]
-            # prevent overwriting a placed block
-            if self.game_field[x][y] == -1:
-                self.game_field[x][y] = self.current_block.block_id
-            else:
-                raise Exception("a block would be placed on top of another block")
-            self.renderer.set_led(x, y, self.current_block.get_color())
-
-    def get_full_rows(self):
-        # first goes through each y-coordinate then x-coordinate
-        full_rows = []
-        for i in range(self.renderer.screen.size_y):
-            is_row_full = True
-            for j in range(self.renderer.screen.size_x):
-                # is_row_full stays true, if every pixel in that row is not empty
-                is_row_full = is_row_full and self.game_field[j][i] != -1
-            # if the row is full, it saves its number/index
-            if is_row_full:
-                full_rows.append(i)
-        return full_rows
-
-    def delete_full_rows(self):
-        full_rows = self.get_full_rows()
-        for full_row in full_rows:
-            for i in range(self.renderer.screen.size_y):
-                row = self.renderer.screen.size_y - i
-                if row <= full_row and row - 1 < self.renderer.screen.size_y:
-                    for j in range(self.renderer.screen.size_x):
-                        self.game_field[j][row] = self.game_field[j][row - 1]
-                        self.renderer.set_led(j, row, block_colors[self.game_field[j][row - 1]])
-'''
-
-
 class Block:
     relative_coordinates: [[int]]
     shape_id: int
-    position: Vector2
+    position: Vector2D
 
     def __init__(self, shape_id: int, x: int, y: int):
         self.shape_id = shape_id
         self.relative_coordinates = array(DEFINED_SHAPES[shape_id].coords)
-        self.position = Vector2(x, y)
+        self.position = Vector2D(x, y)
 
     # Flips the axes on all relative positions of the coordinates
     def __flip_axes(self):
@@ -291,44 +121,44 @@ class Block:
             renderer.set_led(abs_x, abs_y, BACKGROUND_COLOR if do_erase else self.get_shadow_color())
 
 
-class Tetris(GameBase):
+class TetrisScene(SceneBase):
+    # Grid with the game_field
     game_field: [[int]]
+    # Block that the player is holding
     current_block: Block
+    # Node: Unused, theoretically a way to make the game faster
     game_speed: float
+    # Used to give the player time after a respawn to move the block before the next game-tick
     spawn_counter: int
+    # Flag used to prevent the player from moving already dropped pieces between ticks
+    piece_got_dropped: bool = False
 
-    def init(self, game_controller: GameController, renderer: RendererBase, player_one: Player, player_two: Player):
-        super().init(game_controller, renderer, player_one, player_two)
+    def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
+                player_two: Player):
+        super().on_init(scene_controller, renderer, player_one, player_two)
 
         self.reset_game()
 
     def get_time_constant(self):
-        return .3  # self.game_speed
+        return .1  # NOTE: Maybe change to self.game_speed
 
-    def update(self):
+    def on_update(self):
 
         # Checks if the current piece is still in a spawn-delay
         if self.spawn_counter > 0:
             self.spawn_counter -= 1
 
-            # Render-only
-            if self.spawn_counter == 1:
+            # Gameover check
+            if self.spawn_counter == 0:
                 # Checks if no low position could be found and therefor this is gameover
                 if self.get_lowest_block_position() == self.current_block.position.y:
                     self.game_over()
-                    return
+            return
 
-            # Gameover check
-            if self.spawn_counter == 2:
-                # Renders the block and its shadow
-                self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
-                self.current_block.display(self.renderer)
-                self.renderer.push_leds()
-                return
-
+        # Drop-flag-reset
+        self.piece_got_dropped = False
 
         # Checks if the next spot is not blocked
-        # TODO Change with new vector to an int
         if self.can_block_be_moved_to(self.current_block.position.x, self.current_block.position.y - 1):
             self.move_block(0, -1)
         else:
@@ -336,10 +166,16 @@ class Tetris(GameBase):
             self.clear_full_rows()
             self.generate_new_block()
             self.game_speed = self.game_speed / 2
+            self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
+            self.current_block.display(self.renderer)
         self.renderer.push_leds()
 
     def on_player_input(self, player: Player, button: int, status: bool):
-        if not status:
+        if not status or self.piece_got_dropped:
+            return
+
+        # Restricts move-down operations
+        if self.spawn_counter > 0 and button in [Controller.BTN_DOWN, Controller.BTN_UP]:
             return
 
         # Simple movement buttons
@@ -351,18 +187,22 @@ class Tetris(GameBase):
             # Checks if the block can be moved and if so, lets it move
             if self.can_block_be_moved_to(self.current_block.position.x + rel_x, self.current_block.position.y + rel_y):
                 self.move_block(rel_x, rel_y)
+                self.renderer.push_leds()
             return
 
         # Dropping the block
         if button == Controller.BTN_UP:
             difference_to_fall = self.current_block.position.y - self.get_lowest_block_position()
             self.move_block(0, -difference_to_fall)
+            self.piece_got_dropped = True
 
         # Spinning the blocks
         if button == Controller.BTN_A:
             self.rotate_block_if_possible(False)
         if button == Controller.BTN_B:
             self.rotate_block_if_possible(True)
+
+        self.renderer.push_leds()
 
     # Resets the game back to its original state, so it can be (re)played
     def reset_game(self):
@@ -372,7 +212,7 @@ class Tetris(GameBase):
 
     # Pseudo-Randomly generates a new block from the tetris-previews
     def generate_new_block(self):
-        self.spawn_counter = 2
+        self.spawn_counter = 4
         self.current_block = Block(
             random.randint(0, len(DEFINED_SHAPES) - 1),
             int(self.renderer.screen.size_x / 2),
@@ -386,7 +226,7 @@ class Tetris(GameBase):
                 self.current_block.position.y -= 1
                 abs_y = cord[1] + self.current_block.position.y
 
-    # Returns if the current block can be moved to the absolute x/y position
+    # Places the currently held block on the grid
     def place_block(self):
         for cord in self.current_block.relative_coordinates:
             abs_x = cord[0] + self.current_block.position.x
@@ -473,8 +313,10 @@ class Tetris(GameBase):
 
     # Executes once the game is gameover for the player
     def game_over(self):
+        # TODO: Implement between game-over-background
         self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, GAME_OVER_COLOR)
         self.renderer.push_leds()
+        time.sleep(5)
         self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, BACKGROUND_COLOR)
         self.reset_game()
 
