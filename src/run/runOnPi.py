@@ -8,4 +8,4 @@ import Program
 # TODO: Currently the WS2812B-Renderer is not existing, therefor the ANSI-Renderer is here
 
 def start():
-    Program.initalize(ANSIRenderer(Screen(18, 24)), SerialEspUserInput(), PongScene())
+    Program.initalize(ANSIRenderer(), SerialEspUserInput(), PongScene())

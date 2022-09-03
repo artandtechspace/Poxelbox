@@ -1,13 +1,14 @@
 from core.rendering.Screen import Screen
 from core.util.Vector2D import Vector2D
+import config.Config as Cfg
 
 
 class RendererBase:
     # Screen with some properties
     screen: Screen
 
-    def __init__(self, screen: Screen):
-        self.screen = screen
+    def __init__(self):
+        self.screen = Screen(Cfg.CUBE_SIZE_X * Cfg.WALL_SIZE_X, Cfg.CUBE_SIZE_Y * Cfg.WALL_SIZE_Y)
 
     def setup(self):
         pass

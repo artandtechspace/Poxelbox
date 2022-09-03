@@ -12,4 +12,4 @@ def start():
     # Starts pygame
     pygame.init()
 
-    Program.initalize(PyGameRenderer(Screen(18, 20)), PyGameUserInput(), PongScene())
+    Program.initalize(PyGameRenderer(), PyGameUserInput(), PongScene())
