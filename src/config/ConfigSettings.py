@@ -27,20 +27,6 @@ def register_on_loader():
         .has_description("Baud-rate that is used to communicate with the Esp32")\
         .and_then()\
         \
-        .with_int(nameof(Cfg.CUBE_SIZE_X))\
-        .has_min(1)\
-        .has_max(10)\
-        .has_title("Cube-Size (X)")\
-        .has_description("Of how many leds (on the x axis) does one cube consist?")\
-        .and_then()\
-        \
-        .with_int(nameof(Cfg.CUBE_SIZE_Y))\
-        .has_min(1)\
-        .has_max(10)\
-        .has_title("Cube-Size (Y)")\
-        .has_description("Of how many leds (on the y axis) does one cube consist?")\
-        .and_then()\
-        \
         .with_int(nameof(Cfg.WALL_SIZE_X))\
         .has_min(1)\
         .has_max(10)\

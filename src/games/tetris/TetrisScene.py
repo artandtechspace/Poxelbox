@@ -313,7 +313,7 @@ class TetrisScene(SceneBase):
 
     # Executes once the game is gameover for the player
     def game_over(self):
-        # TODO: Implement between game-over-background
+        # TODO: Implement better game-over-background
         self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, GAME_OVER_COLOR)
         self.renderer.push_leds()
         time.sleep(5)
