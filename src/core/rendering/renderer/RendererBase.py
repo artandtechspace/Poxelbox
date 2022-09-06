@@ -8,7 +8,7 @@ class RendererBase:
     screen: Screen
 
     def __init__(self):
-        self.screen = Screen(Cfg.CUBE_SIZE_X * Cfg.WALL_SIZE_X, Cfg.CUBE_SIZE_Y * Cfg.WALL_SIZE_Y)
+        self.screen = Screen(3 * Cfg.WALL_SIZE_X, 4 * Cfg.WALL_SIZE_Y)
 
     def setup(self):
         pass
