@@ -5,6 +5,7 @@ import sys
 class ANSIRenderer(RendererBase):
 
     def setup(self):
+        super().setup()
         # Clears the screen and disables the cursor
         sys.stdout.write("\x1b[2J\x1b[?25l")
 

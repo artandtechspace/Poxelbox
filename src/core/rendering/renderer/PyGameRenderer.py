@@ -8,6 +8,7 @@ class PyGameRenderer(RendererBase):
     __window = None
 
     def setup(self):
+        super().setup()
         # Creates the window object
         self.__window = pygame.display.set_mode((self.screen.size_x * Cfg.LED_PIXEL_SCALE, self.screen.size_y * Cfg.LED_PIXEL_SCALE))
 

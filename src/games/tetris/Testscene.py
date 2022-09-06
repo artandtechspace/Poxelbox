@@ -43,12 +43,13 @@ class Test(GameBase):
 
     def invert_axes(self, axis):
         for x in range(len(self.relatives)):
-                self.relatives[x][axis] = -self.relatives[x][axis]
+            self.relatives[x][axis] = -self.relatives[x][axis]
 
     def update(self):
         self.flip_axes()
         self.invert_axes(1)
 
+        # TODO: Remove, also remove the TestScene.py
         print(self.relatives)
 
         self.render()

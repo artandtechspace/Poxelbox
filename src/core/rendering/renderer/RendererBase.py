@@ -8,10 +8,10 @@ class RendererBase:
     screen: Screen
 
     def __init__(self):
-        self.screen = Screen(3 * Cfg.WALL_SIZE_X, 4 * Cfg.WALL_SIZE_Y)
+        pass
 
     def setup(self):
-        pass
+        self.screen = Screen(3 * Cfg.WALL_SIZE_X, 4 * Cfg.WALL_SIZE_Y)
 
     def fill(self, vector1, vector2):
         pass
