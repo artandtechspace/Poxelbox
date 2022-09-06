@@ -1,11 +1,12 @@
 import Program
 from core.rendering.renderer.PyGameRenderer import PyGameRenderer
-from games.pong.PongScene import PongScene
 import pygame
 from core.userinput.PyGameUserInput import PyGameUserInput
+from core.scenery.LoadingScreen import LoadingScreen
+
 
 def start():
     # Starts pygame
     pygame.init()
 
-    Program.initalize(PyGameRenderer(), PyGameUserInput(), PongScene())
+    Program.initalize(PyGameRenderer(), PyGameUserInput(), LoadingScreen())

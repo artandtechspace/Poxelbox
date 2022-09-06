@@ -1,7 +1,8 @@
 from core.userinput.SerialEspUserInput import SerialEspUserInput
 from core.rendering.renderer.WS2812BRenderer import WS2812BRenderer
-from games.pong.PongScene import PongScene
+from core.scenery.LoadingScreen import LoadingScreen
 import Program
 
+
 def start():
-    Program.initalize(WS2812BRenderer(), SerialEspUserInput(), PongScene())
+    Program.initalize(WS2812BRenderer(), SerialEspUserInput(), LoadingScreen())

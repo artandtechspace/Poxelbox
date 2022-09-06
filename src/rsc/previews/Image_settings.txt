@@ -1,0 +1,2 @@
+Verwendbare Bit-Tiefen:
+32-Bit, 24-Bit

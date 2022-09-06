@@ -19,6 +19,7 @@ config_loader: __CfgLoader.ConfigLoader
 # Process of the webserver
 __web_server_ps: Process
 
+
 # Stops the program and kills it
 def stop():
     global __web_server_ps
@@ -50,10 +51,10 @@ def initalize(renderer: __RendererBase.RendererBase, userinput: __BaseUserInput.
     __web_server_ps = __Webserver.start()
 
     # Creates game controller, prepares it and loads the scene
-    scene_manager = __SceneController.SceneController(renderer, userinput)
+    scene_manager = __SceneController.SceneController(renderer, userinput, scene)
 
     renderer.setup()
 
     scene_manager.prepare()
-    scene_manager.load_scene(scene)
+    scene_manager.load_loading_scene()
     scene_manager.run()
