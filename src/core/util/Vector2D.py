@@ -28,5 +28,10 @@ class Vector2D(Generic[T]):
     def __eq__(self, other_vec):
         return other_vec.x == self.x and other_vec.y == self.y
 
+    def __add__(self, other_vec):
+        self.x += other_vec.x
+        self.y += other_vec.y
+        return self
+
     def copy(self):
         return Vector2D(self.x, self.y)
