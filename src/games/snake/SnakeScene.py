@@ -6,6 +6,7 @@ from core.rendering.renderer.RendererBase import RendererBase
 from config import ControllerKeys as Controller
 from random import random
 from core.util.Vector2D import Vector2D
+from games.GameOverScene import GameOverScene
 
 BACKGROUND_COLOR = Colors.OFF
 BERRY_COLOR = Colors.MAGENTA
@@ -29,6 +30,7 @@ class SnakeScene(SceneBase):
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
         super().on_init(scene_controller, renderer, player_one, player_two)
+        self.scene_controller = scene_controller
 
         self.restart()
 
@@ -111,14 +113,9 @@ class SnakeScene(SceneBase):
             self.find_new_berry()
 
     def game_over(self):
-        # TODO: Refactor lovely @Anton
-        smaller_window_side = self.renderer.screen.size_x if self.renderer.screen.size_x < self.renderer.screen.size_y else self.renderer.screen.size_y
-        ray_y = lambda h: int(h * self.renderer.screen.size_y / smaller_window_side)  # * 1 + self.start_pos[1]
-        for i in range(smaller_window_side):
-            self.renderer.fill(i, ray_y(i), 1, 1, (255, 0, 0))
-            self.renderer.fill((self.renderer.screen.size_x - 1 - i), ray_y(i), 1, 1, (255, 0, 0))
-        self.update_screen()
-        self.restart()
+        game_end = GameOverScene()
+        game_end.reload_scene = self
+        self.scene_controller.load_scene(game_end)
 
     def collision_detection_self(self):
         return self.does_player_occupy_position(self.player_head_pos.x, self.player_head_pos.y)

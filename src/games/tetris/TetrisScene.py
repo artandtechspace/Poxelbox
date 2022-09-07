@@ -6,6 +6,7 @@ from config import ControllerKeys as Controller
 import random
 from core.scenery.SceneBase import SceneBase
 from core.scenery.SceneController import SceneController
+from games.GameOverScene import GameOverScene
 from games.tetris.DefinedTetrisStuff import DEFINED_SHAPES
 from games.tetris.DefinedTetrisStuff import BACKGROUND_COLOR
 from games.tetris.DefinedTetrisStuff import GAME_OVER_COLOR
@@ -33,6 +34,7 @@ class TetrisScene(SceneBase):
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
         super().on_init(scene_controller, renderer, player_one, player_two)
+        self.scene_controller = scene_controller
 
         self.reset_game()
 
@@ -237,14 +239,11 @@ class TetrisScene(SceneBase):
 
         return y
 
-    # Executes once the game is gameover for the player
+    # Executes once the game is game over for the player
     def game_over(self):
-        # TODO: Implement better game-over-background
-        self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, GAME_OVER_COLOR)
-        self.renderer.push_leds()
-        time.sleep(5)
-        self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, BACKGROUND_COLOR)
-        self.reset_game()
+        game_end = GameOverScene()
+        game_end.reload_scene = self
+        self.scene_controller.load_scene(game_end)
 
     def move_block(self, dx: int, dy: int):
         # Erases the shadow and block from the renderer
