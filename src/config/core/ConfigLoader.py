@@ -7,6 +7,8 @@ if TYPE_CHECKING:
     import config.core.types.FloatVarLoader as FloatVL
     import config.core.types.ColorVarLoader as ColorVL
     import config.core.types.IntPresetVarLoader as IntPresetVL
+    import config.core.types.StringPresetVarLoader as StringPresetVL
+    import config.core.types.BoolPresetVarLoader as BoolVL
     import config.core.types.BaseVarLoader as BaseVL
 
 
@@ -17,6 +19,12 @@ class CategoryBuilder:
     def __init__(self, base: ConfigLoaderBuilder):
         self.__base = base
 
+    def with_bool(self, var_name: str):
+        import config.core.types.BoolPresetVarLoader as BoolVL
+        bdr = BoolVL.BoolVLBuilder(self, var_name)
+        self.__builders[var_name] = bdr
+        return bdr
+
     def with_int(self, var_name: str):
         import config.core.types.IntVarLoader as IntVL
         bdr = IntVL.IntVLBuilder(self, var_name)
@@ -26,6 +34,12 @@ class CategoryBuilder:
     def with_float(self, var_name: str):
         import config.core.types.FloatVarLoader as FloatVL
         bdr = FloatVL.FloatVLBuilder(self, var_name)
+        self.__builders[var_name] = bdr
+        return bdr
+
+    def with_string_preset(self, var_name: str, presets: [str]):
+        import config.core.types.StringPresetVarLoader as StringPresetVL
+        bdr = StringPresetVL.StringPresetVLBuilder(self, var_name, presets)
         self.__builders[var_name] = bdr
         return bdr
 

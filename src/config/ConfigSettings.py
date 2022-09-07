@@ -41,5 +41,15 @@ def register_on_loader():
         .has_description("Of how many cubes (on the y axis) does the wall consist?")\
         .and_then()\
         \
+        .with_bool(nameof(Cfg.IS_DEVELOPMENT_ENVIRONMENT))\
+        .has_title("Environment")\
+        .has_description("Is the software running in development (True) or production (False) mode?")\
+        .and_then()\
+        \
+        .with_bool(nameof(Cfg.USE_TEST_SCENE))\
+        .has_title("Use test scene")\
+        .has_description("Shall the test-screen-scene be loaded instead of the normal start scene?")\
+        .and_then()\
+        \
         .end_category()\
         .build()

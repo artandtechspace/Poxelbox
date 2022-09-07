@@ -1,5 +1,3 @@
-import run.runLocal
-#import run.runOnPi
+import Program
 
-run.runLocal.start()
-#run.runOnPi.start()
+Program.initalize()

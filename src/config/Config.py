@@ -17,3 +17,9 @@ APP_SPEED = 1
 # Amount of cubes the wall consists of
 WALL_SIZE_X = 6
 WALL_SIZE_Y = 6
+
+# If on dev (True) or on pi (False)
+IS_DEVELOPMENT_ENVIRONMENT = False
+
+# If the test-scene scene shall be used when running the software
+USE_TEST_SCENE = False

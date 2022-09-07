@@ -6,9 +6,11 @@ import ProgramInfo as __ProgInfo
 import core.scenery.SceneBase as __SceneBase
 import core.userinput.BaseUserInput as __BaseUserInput
 import core.rendering.renderer.RendererBase as __RendererBase
+from debug.PiTestScene import PiTestScene
 from multiprocessing import Process
 import sys
 import json
+import config.Config as Cfg
 
 # Scene-manager
 scene_manager: __SceneController.SceneController
@@ -19,6 +21,7 @@ config_loader: __CfgLoader.ConfigLoader
 # Process of the webserver
 __web_server_ps: Process
 
+
 # Stops the program and kills it
 def stop():
     global __web_server_ps
@@ -28,8 +31,7 @@ def stop():
 
 
 # Starts the program with the given parameters
-def initalize(renderer: __RendererBase.RendererBase, userinput: __BaseUserInput.BaseUserInput,
-              scene: __SceneBase.SceneBase):
+def initalize():
     global scene_manager, config_loader, __web_server_ps
     # Registers the config-loaders
     config_loader = __CfgSettings.register_on_loader()
@@ -46,11 +48,37 @@ def initalize(renderer: __RendererBase.RendererBase, userinput: __BaseUserInput.
         # Exports, writes and updates the file
         fp.write(config_loader.export_to_json())
 
+    renderer = None
+    input_method = None
+
+    # Checks the selected environment
+
+    # Development-env
+    if Cfg.IS_DEVELOPMENT_ENVIRONMENT:
+        from core.rendering.renderer.PyGameRenderer import PyGameRenderer
+        from core.userinput.PyGameUserInput import PyGameUserInput
+
+        renderer = PyGameRenderer()
+        input_method = PyGameUserInput()
+    # Pi-env
+    else:
+        from core.rendering.renderer.WS2812BRenderer import WS2812BRenderer
+        from core.userinput.SerialEspUserInput import SerialEspUserInput
+
+        renderer = WS2812BRenderer()
+        input_method = SerialEspUserInput()
+        return
+
+    from games.tetris.TetrisScene import TetrisScene
+
+    # Gets the first scene
+    scene = PiTestScene() if Cfg.USE_TEST_SCENE else TetrisScene()
+
     # Starts the webserver
     __web_server_ps = __Webserver.start()
 
     # Creates game controller, prepares it and loads the scene
-    scene_manager = __SceneController.SceneController(renderer, userinput)
+    scene_manager = __SceneController.SceneController(renderer, input_method)
 
     renderer.setup()
 
