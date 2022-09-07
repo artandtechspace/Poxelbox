@@ -1,6 +1,6 @@
 from core.rendering.renderer.WS2812BRenderer import WS2812BRenderer
 from time import sleep
-
+import config.Config as Cfg
 
 def start():
     renderer = WS2812BRenderer()

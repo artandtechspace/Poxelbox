@@ -24,9 +24,9 @@ class SerialEspUserInput(BaseUserInput):
 
         # Ensures only one device got detected
         if len(ports) != 1:
-            raise InputError(
-                "We found " + str(
+            print("We found " + str(
                     len(ports)) + " COM-ports. Please connect only or at least one device, the esp.")
+            raise InputError("Unsufficient amount of COM-Ports foun")
 
         # Opens the serial-connection
         self.__ser = serial.Serial(ports[0], Config.ESP_BAUD)
@@ -55,5 +55,6 @@ class SerialEspUserInput(BaseUserInput):
                 self._on_change(data[0] | (data[1] << 8))
 
         except:
+            self.__ser = None
             print("Serial-port error. Retrying in a moment...")
             time.sleep(1)

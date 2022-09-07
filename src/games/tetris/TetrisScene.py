@@ -165,6 +165,12 @@ class TetrisScene(SceneBase):
             self.place_block()
             self.clear_full_rows()
             self.generate_new_block()
+
+            # Checks if the block is colliding with the grid
+            if not self.can_block_be_moved_to(self.current_block.position.x, self.current_block.position.y):
+                self.game_over()
+                return
+
             self.game_speed = self.game_speed / 2
             self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
             self.current_block.display(self.renderer)

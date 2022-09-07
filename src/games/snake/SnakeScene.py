@@ -100,7 +100,7 @@ class SnakeScene(SceneBase):
     def game_over(self):
         # TODO: Refactor @Anton
         smaller_window_side = self.renderer.screen.size_x if self.renderer.screen.size_x <= self.renderer.screen.size_y else self.renderer.screen.size_y
-        ray_y = lambda h: (h * self.renderer.screen.size_y / smaller_window_side)  # * 1 + self.start_pos[1]
+        ray_y = lambda h: int(h * self.renderer.screen.size_y / smaller_window_side)  # * 1 + self.start_pos[1]
         for i in range(smaller_window_side):
             self.renderer.fill(i, ray_y(i), 1, 1, (255, 0, 0))
             self.renderer.fill((self.renderer.screen.size_x - 1 - i), ray_y(i), 1, 1, (255, 0, 0))
