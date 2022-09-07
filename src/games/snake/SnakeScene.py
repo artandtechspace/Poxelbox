@@ -10,6 +10,7 @@ from core.util.Vector2D import Vector2D
 BACKGROUND_COLOR = Colors.OFF
 BERRY_COLOR = Colors.MAGENTA
 PLAYER_COLOR = Colors.YELLOW
+PLAYER_COLOR_HEAD = Colors.ORANGE
 PLAYER_START_LENGTH = 3
 
 # Control-pad-buttons
@@ -22,6 +23,8 @@ class SnakeScene(SceneBase):
     player_head_pos: Vector2D[int]
     player_body_pos: [Vector2D[int]]
     berry_pos: Vector2D[int]
+    moves: int
+    direction: Vector2D
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
@@ -32,31 +35,41 @@ class SnakeScene(SceneBase):
     def restart(self):
         self.pressed_button = Controller.BTN_UP
         self.player_length = PLAYER_START_LENGTH
-        self.player_head_pos = Vector2D[int](int(self.renderer.screen.size_x / 2), int(self.renderer.screen.size_y / 2))
-        self.player_body_pos = [self.player_head_pos.copy()]
+        self.moves = 0
+        self.direction = Vector2D(0, 1)
 
         # paints the window
         self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, BACKGROUND_COLOR)
 
+        self.player_head_pos = Vector2D[int](int(self.renderer.screen.size_x / 2), int(self.renderer.screen.size_y / 2))
+        self.player_body_pos = []
+        for segment in range(self.player_length - 1):
+            segment = self.player_length - segment - 1
+            self.player_body_pos.append(Vector2D[int](self.player_head_pos.x, (self.player_head_pos.y - segment)))
+            self.renderer.set_led(self.player_body_pos[-1].x, self.player_body_pos[-1].y, PLAYER_COLOR)
+
         # first sets the berry
         self.find_new_berry()
         # fist draws the player
-        self.draw_player()
+        self.draw_player_head()
         self.update_screen()
 
     def update_screen(self):
         self.renderer.push_leds()
 
-    def draw_player(self):
-        self.renderer.set_led(self.player_head_pos.x, self.player_head_pos.y, PLAYER_COLOR)
+    def draw_player_head(self):
+        self.renderer.set_led(self.player_head_pos.x, self.player_head_pos.y, PLAYER_COLOR_HEAD)
         self.player_body_pos.append(self.player_head_pos.copy())
 
-    def erase_player(self):
+    def erase_player_tail(self):
+        self.renderer.set_led(self.player_head_pos.x, self.player_head_pos.y, PLAYER_COLOR)
         player_tail_pos = self.player_body_pos[0]
         length_difference = self.player_length - len(self.player_body_pos)
+        # if the snake is long enough, remove last pixel
         if length_difference <= 0:
             self.renderer.set_led_vector(player_tail_pos, BACKGROUND_COLOR)
             self.player_body_pos.pop(0)
+        # if the snake is too short, keep last pixel
         elif length_difference > 0:
             pass
 
@@ -98,8 +111,8 @@ class SnakeScene(SceneBase):
             self.find_new_berry()
 
     def game_over(self):
-        # TODO: Refactor @Anton
-        smaller_window_side = self.renderer.screen.size_x if self.renderer.screen.size_x <= self.renderer.screen.size_y else self.renderer.screen.size_y
+        # TODO: Refactor lovely @Anton
+        smaller_window_side = self.renderer.screen.size_x if self.renderer.screen.size_x < self.renderer.screen.size_y else self.renderer.screen.size_y
         ray_y = lambda h: int(h * self.renderer.screen.size_y / smaller_window_side)  # * 1 + self.start_pos[1]
         for i in range(smaller_window_side):
             self.renderer.fill(i, ray_y(i), 1, 1, (255, 0, 0))
@@ -111,49 +124,43 @@ class SnakeScene(SceneBase):
         return self.does_player_occupy_position(self.player_head_pos.x, self.player_head_pos.y)
 
     def get_time_constant(self):
-        return .1
+        return .15
 
     def on_player_input(self, player: Player, button: int, status: bool):
-        if status and button in CONTROL_PAD_BUTTONS:
-            self.pressed_button = button
+        if status:
+            # go down
+            if button == Controller.BTN_DOWN:
+                self.direction = Vector2D(0, -1)
+            # go up
+            elif button == Controller.BTN_UP:
+                self.direction = Vector2D(0, 1)
+            # go left
+            elif button == Controller.BTN_LEFT:
+                self.direction = Vector2D(-1, 0)
+            # go right
+            elif button == Controller.BTN_RIGHT:
+                self.direction = Vector2D(1, 0)
 
     def on_update(self):
-        if self.pressed_button == Controller.BTN_DOWN:
-            if self.player_head_pos.y > 0:
-                self.erase_player()
-                self.player_head_pos.y -= 1
-                if self.collision_detection_self():
-                    self.game_over()
-                self.draw_player()
-            else:  # must be outside the borders
-                self.game_over()
-        elif self.pressed_button == Controller.BTN_UP:
-            if self.player_head_pos.y + 1 < self.renderer.screen.size_y:
-                self.erase_player()
-                self.player_head_pos.y += 1
-                if self.collision_detection_self():
-                    self.game_over()
-                self.draw_player()
-            else:  # must be outside the borders
-                self.game_over()
-        elif self.pressed_button == Controller.BTN_LEFT:
-            if self.player_head_pos.x > 0:
-                self.erase_player()
-                self.player_head_pos.x -= 1
-                if self.collision_detection_self():
-                    self.game_over()
-                self.draw_player()
-            else:  # must be outside the borders
-                self.game_over()
-        elif self.pressed_button == Controller.BTN_RIGHT:
-            if self.player_head_pos.x + 1 < self.renderer.screen.size_x:
-                self.erase_player()
-                self.player_head_pos.x += 1
-                if self.collision_detection_self():
-                    self.game_over()
-                self.draw_player()
-            else:  # must be outside the borders
-                self.game_over()
+        self.__move(self.direction)
         self.berry_mechanics()
+        self.moves += 1
         self.update_screen()
-        pass
+
+    def __move(self, dv: Vector2D):
+        # out of the screen detection
+        if self.renderer.screen.size_x > self.player_head_pos.x + dv.x >= 0 and \
+                self.renderer.screen.size_y > self.player_head_pos.y + dv.y >= 0:
+            # not running in itself
+            if self.player_head_pos.x + dv.x != self.player_body_pos[-2].x or\
+               self.player_head_pos.y + dv.y != self.player_body_pos[-2].y:
+                self.erase_player_tail()
+                self.player_head_pos = self.player_head_pos + dv
+                if self.collision_detection_self():
+                    self.game_over()
+                self.draw_player_head()
+            else:
+                # would have run into self -> moves in the opposite as pressed direction
+                self.__move(Vector2D(-dv.x, -dv.y))
+        else:  # must be outside the borders
+            self.game_over()
