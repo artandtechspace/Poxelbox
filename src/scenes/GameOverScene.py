@@ -1,25 +1,27 @@
 from config import Colors
 from core.rendering.renderer.RendererBase import RendererBase
-from core.scenery.SceneBase import SceneBase
+from core.scenery.GameScene import GameScene
 from core.util.Player import Player
 from core.scenery.SceneController import SceneController
 
 
-class GameOverScene(SceneBase):
+class GameOverScene(GameScene):
     reload_scene: any
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
         super().on_init(scene_controller, renderer, player_one, player_two)
-        self.scene_controller = scene_controller
 
         self.renderer.fill(0, 0, renderer.screen.size_x, renderer.screen.size_y, Colors.OFF)
 
+        # calculates a ray between the corners
         thickness = 1
         def ray(x: int): return int(x * self.renderer.screen.size_y / self.renderer.screen.size_x)
         if self.renderer.screen.size_y % 2 == 0 or self.renderer.screen.size_x % 2 == 0:
             def ray(x: int): return int(x * (self.renderer.screen.size_y + 1) / self.renderer.screen.size_x)
-            thickness += 1
+            thickness += int(ray(100)/100)
+
+        # draws the ray from down left to up right and up left to down right
         for i in range(self.renderer.screen.size_x):
             for j in range(thickness):
                 j = j - int(thickness/2)

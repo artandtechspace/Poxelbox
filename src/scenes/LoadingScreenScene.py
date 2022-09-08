@@ -5,18 +5,18 @@ from core.util.Player import Player
 from core.rendering.renderer.RendererBase import RendererBase
 from PIL import Image
 import config.Config as Cfg
-from config import ControllerKeys as Controller
+from config import ControllerKeys as Keys
 from core.util.Vector2D import Vector2D
 from scenes.snake import SnakeScene
 from scenes.tetris import TetrisScene
 import scenes.pong.PongScene as PongScene
 from core.scenery.GameScene import GameScene
 
-ARROW = "rsc//previews//arrow.png"
-ARROW_COLOR = Colors.WHITE
-PREVIEWS = ["rsc//previews//tetris", "rsc//previews//snake"]
-
 GAMES = [TetrisScene.TetrisScene(), SnakeScene.SnakeScene()]
+START_KEYS = [Keys.BTN_START, Keys.BTN_SELECT, Keys.BTN_A]
+ARROW_COLOR = Colors.WHITE
+ARROW = "rsc//previews//arrow.png"
+PREVIEWS = ["rsc//previews//tetris", "rsc//previews//snake"]
 
 
 class LoadingScreenScene(SceneBase):
@@ -30,9 +30,8 @@ class LoadingScreenScene(SceneBase):
         self.images = []
         self.game_idx = 0
 
-        for gid in range(len(GAMES)):
-            if GAMES[gid] == pre_scene:
-                self.game_idx = gid
+        if pre_scene in GAMES:
+            self.game_idx = GAMES.index(pre_scene)
 
     def get_time_constant(self):
         return 1
@@ -59,24 +58,23 @@ class LoadingScreenScene(SceneBase):
         if status:
             # Iterate though scenes
             # Go left
-            if button == Controller.BTN_LEFT:
+            if button == Keys.BTN_LEFT:
                 self.game_idx += 1
                 # fixes overshoot
                 if self.game_idx >= len(PREVIEWS):
                     self.game_idx = 0
                 self.__display_image(self.game_idx)
             # Go right
-            elif button == Controller.BTN_RIGHT:
+            elif button == Keys.BTN_RIGHT:
                 self.game_idx -= 1
                 # fixes overshoot
                 if self.game_idx < 0:
                     self.game_idx = len(PREVIEWS) - 1
                 self.__display_image(self.game_idx)
             # Starts scenes
-            elif button == Controller.BTN_START:
-                # Pong / first game
+            elif button in START_KEYS:
+                self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
                 if self.game_idx in range(len(GAMES)):
-                    self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
                     self.scene_controller.load_scene(GAMES[self.game_idx])
 
     # Generates the arrow overlay for the previews
