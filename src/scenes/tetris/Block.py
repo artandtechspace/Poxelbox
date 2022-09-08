@@ -1,10 +1,9 @@
-
 from core.util.Vector2D import Vector2D
 from numpy import array
-from games.tetris.DefinedTetrisStuff import DEFINED_SHAPES
+from scenes.tetris.DefinedTetrisStuff import DEFINED_SHAPES
 from core.rendering.renderer.RendererBase import RendererBase
-from config import Colors
-from games.tetris.DefinedTetrisStuff import BACKGROUND_COLOR
+from scenes.tetris.DefinedTetrisStuff import BACKGROUND_COLOR
+
 
 class Block:
     relative_coordinates: [[int]]
@@ -66,4 +65,3 @@ class Block:
             abs_x = cord[0] + self.position.x
             abs_y = cord[1] + y_position
             renderer.set_led(abs_x, abs_y, BACKGROUND_COLOR if do_erase else self.get_shadow_color())
-

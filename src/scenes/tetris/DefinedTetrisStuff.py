@@ -1,6 +1,6 @@
 
 from config import Colors
-from games.tetris.Shape import Shape
+from scenes.tetris.Shape import Shape
 
 BACKGROUND_COLOR = Colors.OFF
 

@@ -6,11 +6,10 @@ from config import ControllerKeys as Controller
 import random
 from core.scenery.SceneBase import SceneBase
 from core.scenery.SceneController import SceneController
-from games.GameOverScene import GameOverScene
-from games.tetris.DefinedTetrisStuff import DEFINED_SHAPES
-from games.tetris.DefinedTetrisStuff import BACKGROUND_COLOR
-from games.tetris.DefinedTetrisStuff import GAME_OVER_COLOR
-from games.tetris.Block import Block
+from scenes.GameOverScene import GameOverScene
+from scenes.tetris.DefinedTetrisStuff import DEFINED_SHAPES
+from scenes.tetris.DefinedTetrisStuff import BACKGROUND_COLOR
+from scenes.tetris.Block import Block
 
 # Collision error codes
 COLLISION_GRID = 1
