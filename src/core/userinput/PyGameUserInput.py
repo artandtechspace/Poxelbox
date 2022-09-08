@@ -40,7 +40,6 @@ class PyGameUserInput(BaseUserInput):
 
             # Checks for the window-close-event
             if event.type == pygame.QUIT:
-                pygame.quit()
                 Program.stop()
 
             # Checks if the pressed key conforms to the mappings

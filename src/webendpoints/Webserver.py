@@ -5,7 +5,7 @@ from multiprocessing import Process
 import ProgramInfo as __ProgInfo
 
 # The flash-rest-api
-app = Flask(__name__)
+app = Flask("Poxelbox-Configuration-API")
 
 
 # Returns the fully exported configuration
@@ -26,11 +26,14 @@ def __push_view():
         # Exports, writes and updates the file
         fp.write(Program.config_loader.export_to_json())
 
-    return "", 200
+    Program.stop()
+
+    return "Success", 200
+
 
 # Event: Runs once when the server is started inside a different thread (Process)
 def __async_start():
-    app.run(port=ProgInfo.WEB_PORT)
+    app.run(port=ProgInfo.WEB_PORT, host='0.0.0.0')
 
 
 # Starts the webserver and return it's process

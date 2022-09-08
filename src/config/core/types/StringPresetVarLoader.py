@@ -1,8 +1,8 @@
 import config.core.types.BaseVarLoader as BaseVL
 import config.core.ConfigLoader as CfgLdr
 
-class StringPresetVLBuilder(BaseVL.BaseVLBuilder):
 
+class StringPresetVLBuilder(BaseVL.BaseVLBuilder):
     __presets: [str]
 
     def __init__(self, back_ref: CfgLdr.CategoryBuilder, var_name: str, presets: [str]):
@@ -13,8 +13,8 @@ class StringPresetVLBuilder(BaseVL.BaseVLBuilder):
     def export_end(self):
         return StringPresetVarLoader(self._var_name, self._title, self._description, self.__presets)
 
-class StringPresetVarLoader(BaseVL.BaseVarLoader):
 
+class StringPresetVarLoader(BaseVL.BaseVarLoader):
     presets: [str]
 
     def __init__(self, var_name: str, title: str = None, description: str = None, presets: [str] = None):

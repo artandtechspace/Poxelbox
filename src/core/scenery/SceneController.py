@@ -17,6 +17,9 @@ class SceneController:
     # User-input method
     userinp: BaseUserInput
 
+    # Time when the next update shall be send to the scene
+    last_exec: int = 0
+
     def __init__(self, renderer: RendererBase, userinput: BaseUserInput):
         self.rdr = renderer
         self.userinp = userinput
@@ -50,22 +53,17 @@ class SceneController:
         self.rdr.push_leds()
 
     # Starts the scene-loop and execution
-    def run(self):
-        # When the scene-loop executed last
-        last_exec = time.perf_counter() + self.scene.get_time_constant() / Cfg.APP_SPEED
+    def update(self):
+        # Updates the controller input-handler
+        self.userinp.update()
 
-        # Game loop
-        while True:
-            # Updates the controller input-handler
-            self.userinp.update()
+        # Gets the current time in relation
+        clc_time = time.perf_counter()
+        # Updates the frame on time
+        if self.last_exec - clc_time <= 0:
+            # Updates the time before any rendering is done
+            self.last_exec = clc_time + self.scene.get_time_constant() / Cfg.APP_SPEED
+            # Executes the scene loop
+            self.scene.on_update()
 
-            # Gets the current time in relation
-            clc_time = time.perf_counter()
-            # Updates the frame on time
-            if last_exec - clc_time <= 0:
-                # Updates the time before any rendering is done
-                last_exec = clc_time + self.scene.get_time_constant() / Cfg.APP_SPEED
-                # Executes the scene loop
-                self.scene.on_update()
-
-            time.sleep(0.05)
+        time.sleep(0.05)

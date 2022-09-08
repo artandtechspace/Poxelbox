@@ -3,14 +3,14 @@ import core.scenery.SceneController as __SceneController
 import webendpoints.Webserver as __Webserver
 import config.ConfigSettings as __CfgSettings
 import ProgramInfo as __ProgInfo
-import core.scenery.SceneBase as __SceneBase
-import core.userinput.BaseUserInput as __BaseUserInput
-import core.rendering.renderer.RendererBase as __RendererBase
 from debug.PiTestScene import PiTestScene
 from multiprocessing import Process
 import sys
 import json
 import config.Config as Cfg
+import multiprocessing
+import time
+from os.path import exists
 
 # Scene-manager
 scene_manager: __SceneController.SceneController
@@ -21,12 +21,35 @@ config_loader: __CfgLoader.ConfigLoader
 # Process of the webserver
 __web_server_ps: Process
 
+# Thread-safe variable to check if the program is terminated
+is_terminated = multiprocessing.Manager().Value(bool, False)
 
-# Stops the program and kills it
+
+# Queues the program to be stopped
 def stop():
+    global is_terminated
+    is_terminated.set(True)
+
+
+# Kills the program and all subthreads
+# Requires execution from main thread
+def kill_program():
     global __web_server_ps
 
-    __web_server_ps.kill()
+    # Kills pygame if it exists
+    try:
+        import pygame
+        pygame.quit()
+    except:
+        pass
+
+    # Kills webserver if it exists
+    try:
+        __web_server_ps.kill()
+    except:
+        pass
+
+    # Kills program
     sys.exit()
 
 
@@ -36,13 +59,14 @@ def initalize():
     # Registers the config-loaders
     config_loader = __CfgSettings.register_on_loader()
 
-    # Loads the config
-    with open(__ProgInfo.CONFIG_PATH, mode='r') as fp:
-        try:
-            # Tries to from the json inside the file
-            config_loader.try_load_from_json(json.loads(fp.read()))
-        except:
-            pass
+    # Loads the config (If it exists)
+    if exists(__ProgInfo.CONFIG_PATH):
+        with open(__ProgInfo.CONFIG_PATH, mode='r') as fp:
+            try:
+                # Tries to from the json inside the file
+                config_loader.try_load_from_json(json.loads(fp.read()))
+            except:
+                pass
 
     with open(__ProgInfo.CONFIG_PATH, mode='w') as fp:
         # Exports, writes and updates the file
@@ -84,4 +108,15 @@ def initalize():
 
     scene_manager.prepare()
     scene_manager.load_scene(scene)
-    scene_manager.run()
+
+    game_loop()
+
+
+def game_loop():
+    global is_terminated
+    while True:
+        if is_terminated.get():
+            time.sleep(0.2)
+            kill_program()
+
+        scene_manager.update()
