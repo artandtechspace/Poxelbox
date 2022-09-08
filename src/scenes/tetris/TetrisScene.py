@@ -4,7 +4,7 @@ from core.util.Player import Player
 from core.rendering.renderer.RendererBase import RendererBase
 from config import ControllerKeys as Controller
 import random
-from core.scenery.SceneBase import SceneBase
+from core.scenery.GameScene import GameScene
 from core.scenery.SceneController import SceneController
 from scenes.GameOverScene import GameOverScene
 from scenes.tetris.DefinedTetrisStuff import DEFINED_SHAPES
@@ -19,7 +19,7 @@ COLLISION_WALL_LEFT = 3
 COLLISION_WALL_BOTTOM = 4
 NO_COLLISION = 0
 
-class TetrisScene(SceneBase):
+class TetrisScene(GameScene):
     # Grid with the game_field
     game_field: [[int]]
     # Block that the player is holding
