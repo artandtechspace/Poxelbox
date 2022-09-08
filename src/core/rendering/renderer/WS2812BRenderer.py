@@ -10,7 +10,7 @@ class WS2812BRenderer(RendererBase):
 
     def setup(self):
         super().setup()
-        self.__pixels = neopixel.NeoPixel(board.D18, self.screen.size_x * self.screen.size_y, auto_write=False, pixel_order=neopixel.RGB)
+        self.__pixels = neopixel.NeoPixel(board.D12, self.screen.size_x * self.screen.size_y, auto_write=False, pixel_order=neopixel.RGB)
 
     def set_led(self, x: int, y: int, color: (int, int, int)):
         # Ensures the position is on screen
