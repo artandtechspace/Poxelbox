@@ -1,5 +1,5 @@
 from config import Colors
-from core.scenery.SceneBase import SceneBase
+from core.scenery.GameScene import GameScene
 from core.util.Player import Player
 from core.util.Vector2D import Vector2D
 from core.scenery.SceneController import SceneController
@@ -23,7 +23,7 @@ def get_plr_color(p_id: int):
     return COLOR_P1 if p_id == 0 else COLOR_P2
 
 
-class PongScene(SceneBase):
+class PongScene(GameScene):
     # Position and motion of the ball
     ball: Vector2D[float]
     ball_motion: Vector2D[float] = Vector2D(1, 1)

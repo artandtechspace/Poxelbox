@@ -6,16 +6,15 @@ from core.rendering.renderer.RendererBase import RendererBase
 from PIL import Image
 import config.Config as Cfg
 from config import ControllerKeys as Controller
-from games.snake import SnakeScene
-import games.pong.PongScene as PongScene
-from core.util.Vector2D import Vector2D
+from scenes.snake import SnakeScene
+import scenes.pong.PongScene as PongScene
 
 ARROWS = "rsc//previews//arrows.png"
 ARROW_COLOR = Colors.WHITE
 PREVIEWS = ["rsc//previews//pong.png", "rsc//previews//snake.png"]
 
 
-class LoadingScreen(SceneBase):
+class LoadingScreenScene(SceneBase):
     images: []
     arrows: Image
     scenes: []
@@ -60,7 +59,7 @@ class LoadingScreen(SceneBase):
 
     def on_player_input(self, player: Player, button: int, status: bool):
         if status:
-            # Iterate though games
+            # Iterate though scenes
             # Go left
             if button == Controller.BTN_LEFT:
                 self.game_idx += 1
@@ -75,7 +74,7 @@ class LoadingScreen(SceneBase):
                 if self.game_idx < 0:
                     self.game_idx = len(PREVIEWS) - 1
                 self.__display_image(self.game_idx)
-            # Starts games
+            # Starts scenes
             elif button == Controller.BTN_START:
                 # Pong / first game
                 if self.game_idx in range(len(self.scenes)):
