@@ -3,7 +3,7 @@ import core.scenery.SceneController as __SceneController
 import webendpoints.Webserver as __Webserver
 import config.ConfigSettings as __CfgSettings
 import ProgramInfo as __ProgInfo
-from debug.PiTestScene import PiTestScene
+from core.scenery.PiTestScene import PiTestScene
 from multiprocessing import Process
 import sys
 import json
@@ -11,6 +11,7 @@ import config.Config as Cfg
 import multiprocessing
 import time
 from os.path import exists
+from scenes.LoadingScreenScene import LoadingScreenScene
 
 # Scene-manager
 scene_manager: __SceneController.SceneController
@@ -93,10 +94,8 @@ def initalize():
         input_method = SerialEspUserInput()
         return
 
-    from games.tetris.TetrisScene import TetrisScene
-
     # Gets the first scene
-    scene = PiTestScene() if Cfg.USE_TEST_SCENE else TetrisScene()
+    scene = PiTestScene() if Cfg.USE_TEST_SCENE else LoadingScreenScene()
 
     # Starts the webserver
     __web_server_ps = __Webserver.start()

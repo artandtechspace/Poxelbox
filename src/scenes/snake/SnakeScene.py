@@ -6,7 +6,7 @@ from core.rendering.renderer.RendererBase import RendererBase
 from config import ControllerKeys as Controller
 from random import random
 from core.util.Vector2D import Vector2D
-from games.GameOverScene import GameOverScene
+from scenes.GameOverScene import GameOverScene
 
 BACKGROUND_COLOR = Colors.OFF
 BERRY_COLOR = Colors.MAGENTA

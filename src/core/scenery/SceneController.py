@@ -55,9 +55,6 @@ class SceneController:
         self.players[1].init(1, self.__on_player_input)
         self.userinp.start(self.__on_raw_player_input)
 
-        # Init's the loading screen
-        self.scene.on_init(self, self.rdr, self.players[0], self.players[1])
-
     # Starts the scene-loop and execution
     def update(self):
         # Updates the controller input-handler
