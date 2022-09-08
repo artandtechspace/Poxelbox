@@ -92,7 +92,6 @@ def initalize():
 
         renderer = WS2812BRenderer()
         input_method = SerialEspUserInput()
-        return
 
     # Gets the first scene
     scene = PiTestScene() if Cfg.USE_TEST_SCENE else LoadingScreenScene()
