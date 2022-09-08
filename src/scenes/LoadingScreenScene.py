@@ -8,28 +8,36 @@ import config.Config as Cfg
 from config import ControllerKeys as Controller
 from scenes.snake import SnakeScene
 import scenes.pong.PongScene as PongScene
+from core.scenery.GameScene import GameScene
 
 ARROWS = "rsc//previews//arrows.png"
 ARROW_COLOR = Colors.WHITE
 PREVIEWS = ["rsc//previews//pong.png", "rsc//previews//snake.png"]
 
+GAMES = [PongScene.PongScene(), SnakeScene.SnakeScene()]
+
 
 class LoadingScreenScene(SceneBase):
     images: []
     arrows: Image
-    scenes: []
     game_idx: int
+
+    def __init__(self, pre_scene: GameScene = None):
+        super().__init__()
+
+        self.images = []
+        self.game_idx = 0
+
+        for gid in range(len(GAMES)):
+            if GAMES[gid] == pre_scene:
+                self.game_idx = gid
 
     def get_time_constant(self):
         return .1
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
-        # Initialises variables
         super().on_init(scene_controller, renderer, player_one, player_two)
-        self.scene_controller = scene_controller
-        self.images = []
-        self.scenes = [PongScene.PongScene(), SnakeScene.SnakeScene()]
         self.arrows = Image.open(ARROWS)
 
         # Loads every image
@@ -40,7 +48,7 @@ class LoadingScreenScene(SceneBase):
             #     raise Exception("Wrong Image size!")
 
         # loads the image and sets the game index to start value
-        self.reload()
+        self.__display_image(self.game_idx)
 
     def __display_image(self, idx: int):
         t_img = self.images[idx]
@@ -77,11 +85,6 @@ class LoadingScreenScene(SceneBase):
             # Starts scenes
             elif button == Controller.BTN_START:
                 # Pong / first game
-                if self.game_idx in range(len(self.scenes)):
+                if self.game_idx in range(len(GAMES)):
                     self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
-                    self.scene_controller.load_scene(self.scenes[self.game_idx])
-
-    # loads the image and sets the game index to start value
-    def reload(self):
-        self.game_idx = 0
-        self.__display_image(self.game_idx)
+                    self.scene_controller.load_scene(GAMES[self.game_idx])

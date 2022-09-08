@@ -27,7 +27,7 @@ def get_plr_color(p_id: int):
 class PongScene(GameScene):
     # Position and motion of the ball
     ball: Vector2D[float]
-    ball_motion: Vector2D[float] = Vector2D(1, 1)
+    ball_motion: Vector2D[float]
 
     # Players x and y positions. First index for the first player, second for the second
     player_y: Vector2D[int]
@@ -97,6 +97,7 @@ class PongScene(GameScene):
         self.renderer.set_led(int(self.ball.x), int(self.ball.y), COLOR_BALL)
 
     def on_player_input(self, player: Player, button: int, status: bool):
+        super().on_player_input(player,button,status)
         # Gets player id
         i = player.get_id()
 
@@ -131,6 +132,7 @@ class PongScene(GameScene):
 
         # Calculates and set init positions of all object
         self.ball = Vector2D[float](self.renderer.screen.size_x / 2, self.renderer.screen.size_y / 2)
+        self.ball_motion = Vector2D(1, 1)
         self.player_y = Vector2D[int](DIST_EDGE_Y, self.renderer.screen.size_y - DIST_EDGE_Y - 1)
         pos_x = int(self.renderer.screen.size_x / 2 - PLAYER_SIZE / 2)
         self.player_x = Vector2D[int](pos_x, pos_x)

@@ -42,11 +42,7 @@ class SceneController:
 
     # Executes when the player triggers a button or releases a button
     def __on_player_input(self, player, button, status):
-        # Enters the loading screen
-        if status and button == Keys.BTN_SELECT:
-            self.load_scene(self.loading_scene)
-        else:
-            self.scene.on_player_input(player, button, status)
+        self.scene.on_player_input(player, button, status)
 
     # Must be executed before the run-method is executed. Prepares the pi for rendering and other stuff
     def prepare(self):
@@ -65,7 +61,7 @@ class SceneController:
         # Updates the frame on time
         if self.last_exec - clc_time <= 0:
             # Updates the time before any rendering is done
-            self.last_exec = clc_time + self.scene.get_time_constant() / Cfg.APP_SPEED
+            self.last_exec = clc_time + self.scene.get_time_constant()
             # Executes the scene loop
             self.scene.on_update()
 

@@ -9,12 +9,6 @@ def register_on_loader():
         \
         .in_category("Settings")\
         \
-        .with_int(nameof(Cfg.APP_SPEED))\
-        .has_min(1).has_max(10)\
-        .has_title("Game-Speed")\
-        .has_description("How fast the game is running")\
-        .and_then()\
-        \
         .with_int(nameof(Cfg.LED_PIXEL_SCALE))\
         .has_min(5)\
         .has_max(100)\

@@ -69,6 +69,7 @@ class TetrisScene(SceneBase):
         self.renderer.push_leds()
 
     def on_player_input(self, player: Player, button: int, status: bool):
+        super().on_player_input(player, button, status)
         if not status or self.piece_got_dropped:
             return
 

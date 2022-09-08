@@ -19,6 +19,7 @@ class SceneBase:
         self.renderer = renderer
         self.player_one = player_one
         self.player_two = player_two
+        self.scene_controller = scene_controller
 
     # Used to get a time-constant that must be awaited until the next frame is updated
     # Given a larger number, the updates will come slower
