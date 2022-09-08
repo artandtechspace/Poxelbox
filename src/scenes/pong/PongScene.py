@@ -5,6 +5,7 @@ from core.util.Vector2D import Vector2D
 from core.scenery.SceneController import SceneController
 from core.rendering.renderer.RendererBase import RendererBase
 from config import ControllerKeys as Controller
+import config.Config as Cfg
 
 # Size of the cursor
 PLAYER_SIZE = 3
@@ -33,7 +34,7 @@ class PongScene(GameScene):
     player_x: Vector2D[int]
 
     def get_time_constant(self):
-        return .1
+        return Cfg.PONG_SPEED
 
     # Returns if a given player is colliding with a given position
     def is_plr_colliding(self, p_id: int, x: float, y: float):

@@ -10,6 +10,7 @@ from scenes.GameOverScene import GameOverScene
 from scenes.tetris.DefinedTetrisStuff import DEFINED_SHAPES
 from scenes.tetris.DefinedTetrisStuff import BACKGROUND_COLOR
 from scenes.tetris.Block import Block
+import config.Config as Cfg
 
 # Collision error codes
 COLLISION_GRID = 1
@@ -38,7 +39,7 @@ class TetrisScene(SceneBase):
         self.reset_game()
 
     def get_time_constant(self):
-        return .5  # NOTE: Maybe change to self.game_speed
+        return Cfg.TETRIS_SPEED  # NOTE: Maybe change to self.game_speed
 
     def on_update(self):
 
@@ -226,7 +227,7 @@ class TetrisScene(SceneBase):
                                           else DEFINED_SHAPES[self.game_field[y][x]].color)
 
     # Gets the lowest possible y-position that the current block can be moved to
-    # If not lowest position could be found, this return none
+    # If not the lowest position could be found, this return none
     def get_lowest_block_position(self):
         y = self.current_block.position.y
         # Decrements the block position until it can no longer be moved

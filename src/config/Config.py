@@ -23,3 +23,8 @@ IS_DEVELOPMENT_ENVIRONMENT = False
 
 # If the test-scene scene shall be used when running the software
 USE_TEST_SCENE = False
+
+# Speed of the games
+TETRIS_SPEED = 0.2
+PONG_SPEED = 0.1
+SNAKE_SPEED = 0.15

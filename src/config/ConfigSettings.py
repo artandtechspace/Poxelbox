@@ -51,5 +51,26 @@ def register_on_loader():
         .has_description("Shall the test-screen-scene be loaded instead of the normal start scene?")\
         .and_then()\
         \
+        .with_float(nameof(Cfg.TETRIS_SPEED))\
+        .has_min(0)\
+        .has_max(1)\
+        .has_title("Speed (Tetris)")\
+        .has_description("Delay in ms between frames in tetris.")\
+        .and_then()\
+        \
+        .with_float(nameof(Cfg.SNAKE_SPEED))\
+        .has_min(0)\
+        .has_max(1)\
+        .has_title("Speed (Snake)")\
+        .has_description("Delay in ms between frames in snake.")\
+        .and_then()\
+        \
+        .with_float(nameof(Cfg.PONG_SPEED))\
+        .has_min(0)\
+        .has_max(1)\
+        .has_title("Speed (Pong)")\
+        .has_description("Delay in ms between frames in pong.")\
+        .and_then()\
+        \
         .end_category()\
         .build()

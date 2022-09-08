@@ -7,6 +7,7 @@ from config import ControllerKeys as Controller
 from random import random
 from core.util.Vector2D import Vector2D
 from scenes.GameOverScene import GameOverScene
+import config.Config as Cfg
 
 BACKGROUND_COLOR = Colors.OFF
 BERRY_COLOR = Colors.MAGENTA
@@ -121,7 +122,7 @@ class SnakeScene(GameScene):
         return self.does_player_occupy_position(self.player_head_pos.x, self.player_head_pos.y)
 
     def get_time_constant(self):
-        return .15
+        return Cfg.SNAKE_SPEED
 
     def on_player_input(self, player: Player, button: int, status: bool):
         if status:
