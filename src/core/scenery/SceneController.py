@@ -22,13 +22,9 @@ class SceneController:
 
     def __init__(self, renderer: RendererBase, userinput: BaseUserInput, p_loading_scene: any):
         self.loading_scene = p_loading_scene
+        self.scene = p_loading_scene
         self.rdr = renderer
         self.userinp = userinput
-
-    # shows the loading screen
-    def load_loading_scene(self):
-        self.scene = self.loading_scene
-        self.loading_scene.reload()
 
     # Used to open a new scene
     def load_scene(self, next_scene: any):
@@ -47,7 +43,7 @@ class SceneController:
     def __on_player_input(self, player, button, status):
         # Enters the loading screen
         if status and button == Keys.BTN_SELECT:
-            self.load_loading_scene()
+            self.load_scene(self.loading_scene)
         else:
             self.scene.on_player_input(player, button, status)
 
@@ -59,7 +55,7 @@ class SceneController:
         self.userinp.start(self.__on_raw_player_input)
 
         # Init's the loading screen
-        self.loading_scene.on_init(self, self.rdr, self.players[0], self.players[1])
+        self.scene.on_init(self, self.rdr, self.players[0], self.players[1])
 
     # Starts the scene-loop and execution
     def run(self):

@@ -56,5 +56,5 @@ def initalize(renderer: __RendererBase.RendererBase, userinput: __BaseUserInput.
     renderer.setup()
 
     scene_manager.prepare()
-    scene_manager.load_loading_scene()
+    #scene_manager.load_scene(scene)
     scene_manager.run()

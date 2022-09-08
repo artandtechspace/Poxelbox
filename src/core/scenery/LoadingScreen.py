@@ -37,8 +37,8 @@ class LoadingScreen(SceneBase):
         for i in range(len(PREVIEWS)):
             self.images.append(Image.open(PREVIEWS[i]))
             # Raises Exception when the Image does not match the screen size
-            if self.images[i].size != (renderer.screen.size_x, renderer.screen.size_y):
-                raise Exception("Wrong Image size!")
+            # if self.images[i].size != (renderer.screen.size_x, renderer.screen.size_y):
+            #     raise Exception("Wrong Image size!")
 
         # loads the image and sets the game index to start value
         self.reload()
