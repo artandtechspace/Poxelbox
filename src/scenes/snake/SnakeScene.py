@@ -1,5 +1,5 @@
 from config import Colors
-from core.scenery.SceneBase import SceneBase
+from core.scenery.GameScene import GameScene
 from core.util.Player import Player
 from core.scenery.SceneController import SceneController
 from core.rendering.renderer.RendererBase import RendererBase
@@ -18,7 +18,7 @@ PLAYER_START_LENGTH = 3
 CONTROL_PAD_BUTTONS = [Controller.BTN_RIGHT, Controller.BTN_LEFT, Controller.BTN_UP, Controller.BTN_DOWN]
 
 
-class SnakeScene(SceneBase):
+class SnakeScene(GameScene):
     pressed_button: int
     player_length: int
     player_head_pos: Vector2D[int]
