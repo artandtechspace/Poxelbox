@@ -32,10 +32,10 @@ class GameOverScene(GameScene):
     def get_time_constant(self):
         return .1
 
-    def on_update(self):
-        pass
-
     def on_player_input(self, player: Player, button: int, status: bool):
+        if self.on_handle_loading_screen(button, status):
+            return
+
         if status:
             self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
             self.scene_controller.load_scene(self.reload_scene)

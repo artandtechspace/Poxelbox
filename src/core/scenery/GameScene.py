@@ -17,9 +17,14 @@ class GameScene(SceneBase):
     def on_update(self):
         super().on_update()
 
-    def on_player_input(self, player: Player, button: int, status: bool):
+    # Checks if the input was the loading-screen and if so loads the loading screen as a scene
+    # Returns true if the loading screen got loaded
+    def on_handle_loading_screen(self, button: int, status: bool):
         # Checks if select got pressed
         if button == Controller.BTN_SELECT and status:
             # Opens the loading screen scene
             from scenes.LoadingScreenScene import LoadingScreenScene
             self.scene_controller.load_scene(LoadingScreenScene(self))
+            return True
+
+        return False

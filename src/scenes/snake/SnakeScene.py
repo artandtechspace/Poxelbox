@@ -125,7 +125,10 @@ class SnakeScene(GameScene):
         return Cfg.SNAKE_SPEED
 
     def on_player_input(self, player: Player, button: int, status: bool):
-        super().on_player_input(player,button,status)
+        # Handles the loading screen
+        if super().on_handle_loading_screen(button, status):
+            return
+
         if status:
             # go down
             if button == Controller.BTN_DOWN:

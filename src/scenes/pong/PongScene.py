@@ -97,7 +97,11 @@ class PongScene(GameScene):
         self.renderer.set_led(int(self.ball.x), int(self.ball.y), COLOR_BALL)
 
     def on_player_input(self, player: Player, button: int, status: bool):
-        super().on_player_input(player,button,status)
+
+        # Handles the loading screen
+        if super().on_handle_loading_screen(button, status):
+            return
+
         # Gets player id
         i = player.get_id()
 
