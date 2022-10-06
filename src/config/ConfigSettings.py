@@ -66,5 +66,10 @@ def register_on_loader():
         .has_description("Delay in ms between frames in pong.")\
         .and_then()\
         \
+        .with_bool(nameof(Cfg.USE_OLD_WS2812B_CONNECTION_TYPE))\
+        .has_description("If the old ws2812b connection schema or the new one should be used.")\
+        .has_title("Use old WS2812B-Schema?")\
+        .and_then()\
+        \
         .end_category()\
         .build()
