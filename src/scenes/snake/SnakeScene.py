@@ -161,6 +161,7 @@ class SnakeScene(GameScene):
                 if self.collision_detection_self():
                     self.game_over()
                 self.draw_player_head()
+                return
             else:
                 # would have run into self -> moves in the opposite as pressed direction
                 self.__move(Vector2D(-dv.x, -dv.y))
