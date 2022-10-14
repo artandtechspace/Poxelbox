@@ -1,6 +1,7 @@
 from core.rendering.Screen import Screen
 from core.util.Vector2D import Vector2D
 import config.Config as Cfg
+from PIL import Image
 
 
 class RendererBase:
@@ -22,6 +23,18 @@ class RendererBase:
             for y in range(height):
                 self.set_led(x + start_x, y + start_y, color)
         pass
+
+    '''
+    Used to render rgba-images into the screen
+    This cant handle transparency well but if an
+    image has pixels with a transparency of 0, these pixels wont be rendered
+    '''
+    def image(self, img: Image, x_start: int, y_start: int):
+        for x in range(img.size[0]):
+            for y in range(img.size[1]):
+                color = img.getpixel((x, y))
+                if color[3] > 0:
+                    self.set_led(x+x_start, img.size[1] - y - 1 + y_start, color)
 
     def set_led(self, x: int, y: int, color: (int, int, int)):
         pass

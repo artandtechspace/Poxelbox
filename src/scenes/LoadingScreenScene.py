@@ -9,29 +9,42 @@ from config import ControllerKeys as Keys
 from core.util.Vector2D import Vector2D
 from scenes.snake import SnakeScene
 from scenes.tetris import TetrisScene
-import scenes.pong.PongScene as PongScene
 from core.scenery.GameScene import GameScene
+import math
 
-GAMES = [TetrisScene.TetrisScene(), SnakeScene.SnakeScene()]
+# List with instances of every scene that has a preview
+SCENES = {
+    "tetris": TetrisScene.TetrisScene(),
+    "snake": SnakeScene.SnakeScene(),
+}
+
+# Keys to use for starting the selected scene
 START_KEYS = [Keys.BTN_START, Keys.BTN_SELECT, Keys.BTN_A]
+# Color of the arrow
 ARROW_COLOR = Colors.WHITE
+
+# Resource-locations
 ARROW = "rsc//previews//arrow.png"
-PREVIEWS = ["rsc//previews//tetris", "rsc//previews//snake"]
+PREVIEW_PATHS = "rsc//previews"
 
 
 class LoadingScreenScene(SceneBase):
-    images: []
-    arrow_positions: [Vector2D[int], Vector2D[int]]
-    game_idx: int
+    # Preview-Images for the scenes (May contain an image for a scene or may not (Depending on if one exists)
+    scene_images: {}
+    # Name of the scene currently selected (Is a key of the global SCENES variable)
+    scene_name: str
+
+    arrow_images: [Image, Image]
 
     def __init__(self, pre_scene: GameScene = None):
         super().__init__()
 
-        self.images = []
-        self.game_idx = 0
-
-        if pre_scene in GAMES:
-            self.game_idx = GAMES.index(pre_scene)
+        # Gets the currently selected game-name (If one got selected) or the default game
+        self.scene_name = (
+            list(SCENES.keys())[list(SCENES.values()).index(pre_scene)]
+            if pre_scene is not None else
+            list(SCENES.keys())[0]
+        )
 
     def get_time_constant(self):
         return 1
@@ -40,74 +53,111 @@ class LoadingScreenScene(SceneBase):
                 player_two: Player):
         super().on_init(scene_controller, renderer, player_one, player_two)
         self.scene_controller = scene_controller
-        self.arrow_positions = []
-
-        self.__generate_arrow_positions()
+        self.__generate_arrows()
         self.__load_images()
 
-        if len(self.images) != 0:
-            self.__display_image(self.game_idx)
-        else:
-            print("Could not fine a preview image fitting for the screen")
+        # Displays the image if it could be found for the given scene
+        self.__display_image()
 
-    # no updates needed
     def on_update(self):
         pass
 
     def on_player_input(self, player: Player, button: int, status: bool):
-        if status:
-            # Iterate though scenes
-            # Go left
-            if button == Keys.BTN_LEFT:
-                self.game_idx += 1
-                # fixes overshoot
-                if self.game_idx >= len(PREVIEWS):
-                    self.game_idx = 0
-                self.__display_image(self.game_idx)
-            # Go right
-            elif button == Keys.BTN_RIGHT:
-                self.game_idx -= 1
-                # fixes overshoot
-                if self.game_idx < 0:
-                    self.game_idx = len(PREVIEWS) - 1
-                self.__display_image(self.game_idx)
-            # Starts scenes
-            elif button in START_KEYS:
-                self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
-                if self.game_idx in range(len(GAMES)):
-                    self.scene_controller.load_scene(GAMES[self.game_idx])
+        # Only acts on pulldown
+        if not status:
+            return
 
-    # Generates the arrow overlay for the previews
-    def __generate_arrow_positions(self):
+        # Checks for a start-press
+        if button in START_KEYS:
+            # Clears the screen
+            self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
+
+            # Gets the selected scene and loads it
+            self.scene_controller.load_scene(SCENES[self.scene_name])
+
+        # Checks for a left/right arrow button
+        if button in [Keys.BTN_LEFT, Keys.BTN_RIGHT]:
+            # Gets the direction as -1 or 1
+            direction = 1 if button == Keys.BTN_RIGHT else -1
+
+            # Gets the keys of the scenes
+            keys = list(SCENES.keys())
+
+            # Gets the next index from the selected scene
+            idx = keys.index(self.scene_name) + direction
+
+            # Clamps the index
+            if idx < 0:
+                idx = len(keys) - 1
+            if idx >= len(keys):
+                idx = 0
+
+            # Updates the selected scene
+            self.scene_name = keys[idx]
+
+            # Rerenders the screen
+            self.__display_image()
+
+    # Generates the arrow overlay for the previews and also it's mirror overlay
+    def __generate_arrows(self):
         arrow = Image.open(ARROW)
-        # Iterates through every pixel of the arrow and maps its desired positions relative to the screen
-        for x in range(1, arrow.size[0] + 1):
-            for y in range(arrow.size[1]):
-                if arrow.getpixel((x - 1, y)):
-                    pos_y = self.renderer.screen.size_y + 1 - int(arrow.size[1] / 2) - y
-                    self.arrow_positions.append(Vector2D[int](x, pos_y))
-                    self.arrow_positions.append(Vector2D[int](self.renderer.screen.size_x - x - 1, pos_y))
+        mirror = arrow.transpose(Image.FLIP_LEFT_RIGHT)
 
-    def __display_image(self, idx: int):
-        t_img = self.images[idx]
-        # iterates through every pixel and displays the pixels colour at its position
-        for x in range(t_img.size[0]):
-            for y in range(t_img.size[1]):
-                color = t_img.getpixel((x, y))[0:3]
-                if Vector2D[int](x, y) in self.arrow_positions:
-                    color = ARROW_COLOR
-                self.renderer.set_led(x, t_img.size[1] - y - 1, color)
+        self.arrow_images = [arrow, mirror]
+
+    def __render_arrows(self):
+
+        # Image width
+        img_x = self.arrow_images[0].size[0]
+
+        # Screen size
+        sx = self.renderer.screen.size_x
+
+        # Calculates the theoretically perfect space between all elements
+        space = (sx - img_x * 2) / 3
+
+        # Rounds down the perfect space for the borders
+        space_border = int(space)
+        # Rounds up the perfect space for the middle between the arrows
+        space_between = math.ceil(space)
+
+        # Renders the arrows
+        self.renderer.image(self.arrow_images[0], space_border, 1)
+        self.renderer.image(self.arrow_images[1], space_border + space_between + img_x, 1)
+
+    '''
+    Displays the image for the currently selected scene-name (If that image exists)
+    '''
+
+    def __display_image(self):
+        # Ensures an image for the current scene exists
+        if self.scene_name not in self.scene_images:
+            return
+
+        # Gets the image
+        img = self.scene_images[self.scene_name]
+
+        # Renders it
+        self.renderer.image(img, 0, 0)
+
+        # Renders the arrow
+        self.__render_arrows()
+
+        # Sends the led-update
         self.renderer.push_leds()
 
     # Loads images
     def __load_images(self):
-        for preview in PREVIEWS:
-            # searches for the preview with equal size
-            preview += str(self.renderer.screen.size_x)
-            preview += "x"
-            preview += str(self.renderer.screen.size_y)
-            preview += ".png"
+        self.scene_images = {}
+
+        # Iterates over every scene to check
+        for scene_name in SCENES:
+            # Creates the filename
+            file_name = "{path}//{scene}{x}x{y}.png".format(path=PREVIEW_PATHS, scene=scene_name,
+                                                            x=self.renderer.screen.size_x,
+                                                            y=self.renderer.screen.size_y)
             try:
-                self.images.append(Image.open(preview))
+                # Tries to load that image
+                self.scene_images[scene_name] = Image.open(file_name)
             except:
-                pass
+                continue
