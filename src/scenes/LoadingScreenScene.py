@@ -7,6 +7,7 @@ from PIL import Image
 import config.Config as Cfg
 from config import ControllerKeys as Keys
 from core.util.Vector2D import Vector2D
+from scenes.drawing.DrawScene import DrawScene
 from scenes.snake import SnakeScene
 from scenes.tetris import TetrisScene
 from core.scenery.GameScene import GameScene
@@ -16,6 +17,7 @@ import math
 SCENES = {
     "tetris": TetrisScene.TetrisScene(),
     "snake": SnakeScene.SnakeScene(),
+    "draw": DrawScene()
 }
 
 # Keys to use for starting the selected scene
