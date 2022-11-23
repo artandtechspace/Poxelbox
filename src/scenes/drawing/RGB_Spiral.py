@@ -1,4 +1,5 @@
 import math
+import colorsys
 from core.scenery.GameScene import GameScene
 from core.util.Player import Player
 from config import Colors
@@ -187,36 +188,18 @@ class RGB_Spiral(GameScene):
 
         # HSV Color values
         if 0 < x < self.lower_limit:
-            V = 1
+            value = 1
             # S should go from 0 to 1
-            S = self.lower_gradient * x ** 2
+            saturation = self.lower_gradient * x ** 2
         elif self.lower_limit <= x < self.upper_limit:
-            V = 1
-            S = 1
+            value = 1
+            saturation = 1
         else:
             # S and V should go from 1 to 0
-            V = self.upper_gradient * (x - 1) ** 2
-            S = V
+            value = self.upper_gradient * (x - 1) ** 2
+            saturation = value
 
-        # Math from https://www.codespeedy.com/hsv-to-rgb-in-cpp/
-        C = V * S
-        X = C * (1 - abs(((hue / 60) % 2) - 1))
-        m = V - C
-
-        if 0 <= hue < 60:
-            return_val = [C, X, 0]
-        elif 60 <= hue < 120:
-            return_val = [X, C, 0]
-        elif 120 <= hue < 180:
-            return_val = [0, C, X]
-        elif 180 <= hue < 240:
-            return_val = [0, X, C]
-        elif 240 <= hue < 300:
-            return_val = [X, 0, C]
-        else:
-            return_val = [C, 0, X]
-
-        for i in range(len(return_val)):
-            return_val[i] = int((return_val[i] + m) * 255)
-
-        return tuple(return_val)
+        color = colorsys.hsv_to_rgb(hue, saturation, value)
+        for i in range(len(color)):
+            color[i] *= 255
+        return color
