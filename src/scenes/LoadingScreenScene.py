@@ -1,27 +1,23 @@
-from PIL import Image
-import math
-
-import config.Config as Cfg
 from config import Colors
-from config import ControllerKeys as Keys
 from core.scenery.SceneBase import SceneBase
 from core.scenery.SceneController import SceneController
 from core.util.Player import Player
-from core.util.Vector2D import Vector2D
 from core.rendering.renderer.RendererBase import RendererBase
-from core.scenery.GameScene import GameScene
-
+from PIL import Image
+import config.Config as Cfg
+from config import ControllerKeys as Keys
+from core.util.Vector2D import Vector2D
 from scenes.drawing.DrawScene import DrawScene
 from scenes.drawing.RGB_Spiral import RGB_Spiral
 from scenes.snake import SnakeScene
 from scenes.tetris import TetrisScene
-from scenes.minesweeper.MinesweeperScene import MinesweeperScene
+from core.scenery.GameScene import GameScene
+import math
 
 # List with instances of every scene that has a preview
 SCENES = {
     "tetris": TetrisScene.TetrisScene(),
     "snake": SnakeScene.SnakeScene(),
-    "minesweeper": MinesweeperScene(),
     "draw": DrawScene(),
     "RGB_Spiral": RGB_Spiral()
 }

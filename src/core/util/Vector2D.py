@@ -29,13 +29,9 @@ class Vector2D(Generic[T]):
         return other_vec.x == self.x and other_vec.y == self.y
 
     def __add__(self, other_vec):
-        return Vector2D(self.x + other_vec.x, self.y + other_vec.y)
-
-    def __sub__(self, other_vec):
-        return Vector2D(self.x - other_vec.x, self.y - other_vec.y)
-
-    def __mul__(self, other_vec):
-        return Vector2D(self.x * other_vec.x, self.y * other_vec.y)
+        self.x += other_vec.x
+        self.y += other_vec.y
+        return self
 
     def copy(self):
         return Vector2D(self.x, self.y)
