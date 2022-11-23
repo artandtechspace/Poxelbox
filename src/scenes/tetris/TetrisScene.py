@@ -6,7 +6,7 @@ from config import ControllerKeys as Controller
 import random
 from core.scenery.GameScene import GameScene
 from core.scenery.SceneController import SceneController
-from scenes.GameOverScene import GameOverScene
+from scenes.GameEndScene import GameEndScene
 from scenes.tetris.DefinedTetrisStuff import DEFINED_SHAPES
 from scenes.tetris.DefinedTetrisStuff import BACKGROUND_COLOR
 from scenes.tetris.Block import Block
@@ -245,7 +245,7 @@ class TetrisScene(GameScene):
 
     # Executes once the game is game over for the player
     def game_over(self):
-        game_end = GameOverScene()
+        game_end = GameEndScene()
         game_end.reload_scene = self
         self.scene_controller.load_scene(game_end)
 

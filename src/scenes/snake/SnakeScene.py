@@ -6,7 +6,7 @@ from core.rendering.renderer.RendererBase import RendererBase
 from config import ControllerKeys as Controller
 from random import random
 from core.util.Vector2D import Vector2D
-from scenes.GameOverScene import GameOverScene
+from scenes.GameEndScene import GameEndScene
 import config.Config as Cfg
 
 BACKGROUND_COLOR = Colors.OFF
@@ -101,9 +101,10 @@ class SnakeScene(GameScene):
             self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
 
     def won_screen(self):
-        # TODO make a proper win screen
-        self.restart()
-        pass
+        game_end = GameEndScene()
+        game_end.reload_scene = self
+        game_end.won_game = True
+        self.scene_controller.load_scene(game_end)
 
     def player_eats_berry(self):
         self.player_length += 1
@@ -114,7 +115,7 @@ class SnakeScene(GameScene):
             self.find_new_berry()
 
     def game_over(self):
-        game_end = GameOverScene()
+        game_end = GameEndScene()
         game_end.reload_scene = self
         self.scene_controller.load_scene(game_end)
 
