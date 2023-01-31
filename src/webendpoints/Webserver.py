@@ -8,6 +8,13 @@ import ProgramInfo as __ProgInfo
 app = Flask("Poxelbox-Configuration-API")
 
 
+@app.route("/api/push-view", methods=['OPTIONS'])
+def __push_view_pre():
+    resp = Response()
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    resp.headers['Access-Control-Allow-Headers'] = 'content-type'
+    return resp
+
 # Returns the fully exported configuration
 @app.route('/api/get-view', methods=['GET'])
 def __get_view():
