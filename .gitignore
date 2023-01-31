@@ -1,3 +1,4 @@
 src/.idea
 __pycache__/
 src/local
+.nobackup
