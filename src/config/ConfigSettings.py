@@ -7,7 +7,7 @@ from varname import nameof
 def register_on_loader():
     return CfgLdr.ConfigLoaderBuilder()\
         \
-        .in_category("Settings")\
+        .in_category("General Settings")\
         \
         .with_int(nameof(Cfg.LED_PIXEL_SCALE))\
         .has_min(5)\

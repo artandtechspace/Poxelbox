@@ -14,6 +14,9 @@ class RendererBase:
     def setup(self):
         self.screen = Screen(3 * Cfg.WALL_SIZE_X, 4 * Cfg.WALL_SIZE_Y)
 
+    def clear_screen(self):
+        self.fill(0,0,self.screen.size_x,self.screen.size_y, (0,0,0))
+
     def fill(self, vector1, vector2):
         pass
 
