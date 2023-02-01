@@ -1,0 +1,4 @@
+[submodule "src/rsc/webserver"]
+	path = src/rsc/webserver
+	url = https://github.com/artandtechspace/Poxelbox-Configtool-Web.git
+	branch = build

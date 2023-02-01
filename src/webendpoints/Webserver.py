@@ -1,13 +1,43 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_from_directory, redirect
 import Program
 import ProgramInfo as ProgInfo
 from multiprocessing import Process
 import ProgramInfo as __ProgInfo
+import os.path
 
 # The flash-rest-api
 app = Flask("Poxelbox-Configuration-API")
 
 
+##############
+### Webapp ###
+##############
+
+# Returns the webserver directory
+def webserver_dir():  # pragma: no cover
+    return os.path.abspath(os.path.dirname(__file__))+"/../rsc/webserver/app"
+
+# Serves the web-app for configuration
+@app.route('/app/<path:filename>')
+def access_webapp(filename):
+    return send_from_directory(webserver_dir(), filename)
+
+# Directly serves the index-html when only requesting the root
+@app.route('/app/')
+def webapp_quality_of_life():
+    return send_from_directory(webserver_dir(), "index.html")
+
+# Redirecty directly to the webapp
+@app.route("/")
+def root():
+    return redirect("/app/");
+
+
+#####################
+### API Endpoints ###
+#####################
+
+# Required for browsers to accept cross-origin requests
 @app.route("/api/push-view", methods=['OPTIONS'])
 def __push_view_pre():
     resp = Response()
@@ -23,6 +53,7 @@ def __get_view():
     return resp
 
 
+# Accepts updated settings data
 @app.route("/api/push-view", methods=["POST"])
 def __push_view():
     # Tries to load the config
