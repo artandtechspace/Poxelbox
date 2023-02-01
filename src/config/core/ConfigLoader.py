@@ -11,13 +11,13 @@ if TYPE_CHECKING:
     import config.core.types.BoolVarLoader as BoolVL
     import config.core.types.BaseVarLoader as BaseVL
 
-
 class CategoryBuilder:
     __builders: {BaseVL.BaseVLBuilder} = {}
     __base: ConfigLoaderBuilder
 
     def __init__(self, base: ConfigLoaderBuilder):
         self.__base = base
+        self.__builders = {}
 
     def with_bool(self, var_name: str):
         import config.core.types.BoolVarLoader as BoolVL
@@ -69,6 +69,9 @@ class CategoryBuilder:
 
 class ConfigLoaderBuilder:
     __categorys: {CategoryBuilder} = {}
+
+    def __init__(self):
+        self.__categorys={}
 
     def in_category(self, name: str):
         bdr = CategoryBuilder(self)
