@@ -3,3 +3,6 @@ src/.idea
 __pycache__/
 src/local
 .nobackup
+**.pdn
+**.png
+!*x*.png
