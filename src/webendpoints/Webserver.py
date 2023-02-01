@@ -15,7 +15,7 @@ app = Flask("Poxelbox-Configuration-API")
 
 # Returns the webserver directory
 def webserver_dir():  # pragma: no cover
-    return os.path.abspath(os.path.dirname(__file__))+"/../rsc/webserver/app"
+    return os.path.abspath(os.path.dirname(__file__))+"/../rsc/webserver/Poxelbox-Configtool-Web/app"
 
 # Serves the web-app for configuration
 @app.route('/app/<path:filename>')
