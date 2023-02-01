@@ -7,7 +7,6 @@ from config import ControllerKeys as Keys
 from core.scenery.SceneBase import SceneBase
 from core.scenery.SceneController import SceneController
 from core.util.Player import Player
-from core.util.Vector2D import Vector2D
 from core.rendering.renderer.RendererBase import RendererBase
 from core.scenery.GameScene import GameScene
 
@@ -15,16 +14,25 @@ from scenes.drawing.DrawScene import DrawScene
 from scenes.drawing.RGB_Spiral import RGB_Spiral
 from scenes.snake import SnakeScene
 from scenes.tetris import TetrisScene
+from scenes.pong import PongScene
 from scenes.minesweeper.MinesweeperScene import MinesweeperScene
+
+# Used to register games based on the config
+def allow_if(name: str, scene: GameScene, allow: bool):
+    if allow:
+        return {name: scene}
+    return {}
 
 # List with instances of every scene that has a preview
 SCENES = {
-    "tetris": TetrisScene.TetrisScene(),
-    "snake": SnakeScene.SnakeScene(),
-    "minesweeper": MinesweeperScene(),
-    "draw": DrawScene(),
-    "RGB_Spiral": RGB_Spiral()
+    **allow_if("snake", SnakeScene.SnakeScene(), Cfg.SNAKE_ENABLED),
+    **allow_if("tetris", TetrisScene.TetrisScene(), Cfg.TETRIS_ENABLED),
+    **allow_if("pong", PongScene.PongScene(), Cfg.PONG_ENABLED),
+    **allow_if("minesweeper", MinesweeperScene(), Cfg.MINESWEEPER_ENABLED),
+    **allow_if("draw", DrawScene(), Cfg.DRAW_ENABLED),
+    **allow_if("rgb-spiral", RGB_Spiral(), Cfg.RGB_SPIRAL_ENABLED)
 }
+print(SCENES)
 
 # Keys to use for starting the selected scene
 START_KEYS = [Keys.BTN_START, Keys.BTN_SELECT, Keys.BTN_A]
