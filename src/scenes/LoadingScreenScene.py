@@ -134,8 +134,15 @@ class LoadingScreenScene(SceneBase):
     '''
 
     def __display_image(self):
+        self.renderer.clear_screen()
+
         # Ensures an image for the current scene exists
         if self.scene_name not in self.scene_images:
+            # Renders the arrow
+            self.__render_arrows()
+
+            # Sends the led-update
+            self.renderer.push_leds()
             return
 
         # Gets the image

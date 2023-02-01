@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     import config.core.types.ColorVarLoader as ColorVL
     import config.core.types.IntPresetVarLoader as IntPresetVL
     import config.core.types.StringPresetVarLoader as StringPresetVL
-    import config.core.types.BoolPresetVarLoader as BoolVL
+    import config.core.types.BoolVarLoader as BoolVL
     import config.core.types.BaseVarLoader as BaseVL
 
 
@@ -20,7 +20,7 @@ class CategoryBuilder:
         self.__base = base
 
     def with_bool(self, var_name: str):
-        import config.core.types.BoolPresetVarLoader as BoolVL
+        import config.core.types.BoolVarLoader as BoolVL
         bdr = BoolVL.BoolVLBuilder(self, var_name)
         self.__builders[var_name] = bdr
         return bdr
