@@ -70,7 +70,7 @@ def register_rgb_spiral_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .end_category()
 
 def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
-    return loader.in_category("General Settings")\
+    return loader.in_category("General-Settings")\
         \
         .with_int(nameof(Cfg.LED_PIXEL_SCALE))\
         .has_min(5)\
