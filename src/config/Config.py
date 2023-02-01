@@ -1,6 +1,6 @@
 '''
 !Important!
-Allways import the whole Config module using
+Always import the whole Config module using
 import config.Config as Cfg
 because otherwise overriding config-values wont take effect for your code
 '''
