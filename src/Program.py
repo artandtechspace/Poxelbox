@@ -96,8 +96,9 @@ def initalize():
     # Gets the first scene
     scene = PiTestScene() if Cfg.USE_TEST_SCENE else LoadingScreenScene()
 
-    # Starts the webserver
-    __web_server_ps = __Webserver.start()
+    if sys.platform != 'win32':
+        # Starts the webserver
+        __web_server_ps = __Webserver.start()
 
     # Creates game controller, prepares it and loads the scene
     scene_manager = __SceneController.SceneController(renderer, input_method)

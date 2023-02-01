@@ -32,7 +32,6 @@ SCENES = {
     **allow_if("draw", DrawScene(), Cfg.DRAW_ENABLED),
     **allow_if("rgb-spiral", RGB_Spiral(), Cfg.RGB_SPIRAL_ENABLED)
 }
-print(SCENES)
 
 # Keys to use for starting the selected scene
 START_KEYS = [Keys.BTN_START, Keys.BTN_SELECT, Keys.BTN_A]

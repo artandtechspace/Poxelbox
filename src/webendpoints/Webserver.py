@@ -30,7 +30,7 @@ def webapp_quality_of_life():
 # Redirecty directly to the webapp
 @app.route("/")
 def root():
-    return redirect("/app/");
+    return redirect("/app/")
 
 
 #####################
