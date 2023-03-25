@@ -96,7 +96,6 @@ class RGB_Spiral(GameScene):
 
         # upper limit adjust
         if button in [Controller.BTN_RIGHT, Controller.BTN_LEFT]:
-            print('self.mode: ', self.mode)
             # Adjust upper limit
             if self.mode == 0:
                 self.upper_limit = __adjust_variable__(self.upper_limit, 0.05, button == Controller.BTN_RIGHT,
@@ -199,7 +198,7 @@ class RGB_Spiral(GameScene):
             value = self.upper_gradient * (x - 1) ** 2
             saturation = value
 
-        color = colorsys.hsv_to_rgb(hue, saturation, value)
+        color = list(colorsys.hsv_to_rgb(hue, saturation, value))
         for i in range(len(color)):
             color[i] *= 255
         return color
