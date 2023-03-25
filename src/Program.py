@@ -11,7 +11,7 @@ import config.Config as Cfg
 import multiprocessing
 import time
 from os.path import exists
-from scenes.LoadingScreenScene import LoadingScreenScene
+from scenes import LoadingScreenScene
 
 # Scene-manager
 scene_manager: __SceneController.SceneController
@@ -75,6 +75,7 @@ def initalize():
 
     renderer = None
     input_method = None
+    scene = None
 
     # Checks the selected environment
 
@@ -94,7 +95,12 @@ def initalize():
         input_method = SerialEspUserInput()
 
     # Gets the first scene
-    scene = PiTestScene() if Cfg.USE_TEST_SCENE else LoadingScreenScene()
+    if Cfg.USE_TEST_SCENE:
+        scene = PiTestScene()
+    else:
+        # Initalizes the load-screen
+        LoadingScreenScene.init_loading_screen()
+        scene = LoadingScreenScene.LoadingScreenScene()
 
     if sys.platform != 'win32':
         # Starts the webserver
