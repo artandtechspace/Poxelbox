@@ -49,6 +49,11 @@ ESP_BAUD = 9600
 WALL_SIZE_X = 6
 WALL_SIZE_Y = 6
 
+# Dimensions of one Box
+BOX_SIZE_X = 3
+BOX_SIZE_Y = 4
+PX_PER_BOX = BOX_SIZE_X * BOX_SIZE_Y
+
 # If on dev (True) or on pi (False)
 IS_DEVELOPMENT_ENVIRONMENT = False
 

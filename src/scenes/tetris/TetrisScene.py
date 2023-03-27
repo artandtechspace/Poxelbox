@@ -19,6 +19,7 @@ COLLISION_WALL_LEFT = 3
 COLLISION_WALL_BOTTOM = 4
 NO_COLLISION = 0
 
+
 class TetrisScene(GameScene):
     # Grid with the game_field
     game_field: [[int]]
@@ -30,6 +31,7 @@ class TetrisScene(GameScene):
     spawn_counter: int
     # Flag used to prevent the player from moving already dropped pieces between ticks
     piece_got_dropped: bool = False
+    score = 0
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
@@ -212,6 +214,7 @@ class TetrisScene(GameScene):
     # Removes all full-rows from the game-field, if there are any
     # and if so, rerenders the whole field
     def clear_full_rows(self):
+        self.score += 1  # TODO: increase the score stronger for more rows cleared at once
         # Filters out every row where no unset block is left
         self.game_field = list(filter(lambda row: not all(elm > -1 for elm in row), self.game_field))
 

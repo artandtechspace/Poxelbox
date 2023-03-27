@@ -1,15 +1,28 @@
 from PIL import Image
 
 from config import Colors
+from core.rendering.characters import NumberRenderer
 from core.rendering.renderer.RendererBase import RendererBase
 from core.scenery.GameScene import GameScene
+from core.util.Color import Color
 from core.util.Player import Player
 from core.scenery.SceneController import SceneController
+from core.util.Vector2D import Vector2D
 
 
 class GameEndScene(GameScene):
     reload_scene: any
     won_game = False
+    high_score: int
+
+    # only used to set an optional high score
+    def __init__(self, high_score=None):
+        if high_score:
+            if type(high_score) != int:
+                raise ValueError("non integer numbers are not supported yet")
+            if high_score < 0:
+                raise ValueError("negative numbers are not supported yet")
+            self.high_score = high_score
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
@@ -22,11 +35,28 @@ class GameEndScene(GameScene):
 
             self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
             try:
-                win_image = Image.open("rsc//vfx//skull" + str(self.renderer.screen.size_x) + "x" + str(
+                img = Image.open("rsc//vfx//skull" + str(self.renderer.screen.size_x) + "x" + str(
                     self.renderer.screen.size_y) + ".png")
-                self.renderer.image(win_image, 0, 0)
+
+                # Displays the high score
+                if self.high_score:
+                    no_numbers_max = self.renderer.screen.size_x // NumberRenderer.DIMENSIONS_MIN.x
+                    diff = self.renderer.screen.size_x - no_numbers_max.x * NumberRenderer.DIMENSIONS_MIN.x
+
+                    num_renderer = NumberRenderer.NumberRenderer(pos=Vector2D(
+                        diff / 2, int((self.renderer.screen.size_y + NumberRenderer.DIMENSIONS_MIN.y) / 2)),
+                        color=Color(0, 0, 255))
+                    screen_buffer = num_renderer.render(self.high_score, renderer=self.renderer, return_as_array=True)
+
+                    for x in range(self.renderer.screen.size_x):
+                        for y in range(self.renderer.screen.size_y):
+                            color = screen_buffer[x][y]
+                            color += Color(255, 0, 0) if img.getpixel((x, img.size[1] - y - 1)) else None
+                            self.renderer.set_led(x, y, color)
+                else:
+                    self.renderer.image(img, 0, 0)
             except:
-                self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
+                self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.RED)
 
             """# calculates a ray between the corners
             thickness = 1
@@ -46,9 +76,9 @@ class GameEndScene(GameScene):
         else:
             self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
             try:
-                win_image = Image.open("rsc//vfx//tick" + str(self.renderer.screen.size_x) + "x" + str(
+                img = Image.open("rsc//vfx//tick" + str(self.renderer.screen.size_x) + "x" + str(
                     self.renderer.screen.size_y) + ".png")
-                self.renderer.image(win_image, 0, 0)
+                self.renderer.image(img, 0, 0)
             except:
                 self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.GREEN)
 
@@ -61,6 +91,7 @@ class GameEndScene(GameScene):
         if self.on_handle_loading_screen(button, status):
             return
 
+        # TODO: add delay before allowing to continue
         if status:
             self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
             self.scene_controller.load_scene(self.reload_scene)
