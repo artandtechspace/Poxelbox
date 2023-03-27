@@ -13,7 +13,7 @@ from core.util.Vector2D import Vector2D
 class GameEndScene(GameScene):
     reload_scene: any
     won_game = False
-    high_score: int
+    high_score = None
 
     # only used to set an optional high score
     def __init__(self, high_score=None):
@@ -22,6 +22,7 @@ class GameEndScene(GameScene):
                 raise ValueError("non integer numbers are not supported yet")
             if high_score < 0:
                 raise ValueError("negative numbers are not supported yet")
+
             self.high_score = high_score
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
@@ -41,21 +42,21 @@ class GameEndScene(GameScene):
                 # Displays the high score
                 if self.high_score:
                     no_numbers_max = self.renderer.screen.size_x // NumberRenderer.DIMENSIONS_MIN.x
-                    diff = self.renderer.screen.size_x - no_numbers_max.x * NumberRenderer.DIMENSIONS_MIN.x
+                    diff = self.renderer.screen.size_x - no_numbers_max * NumberRenderer.DIMENSIONS_MIN.x
 
                     num_renderer = NumberRenderer.NumberRenderer(pos=Vector2D(
-                        diff / 2, int((self.renderer.screen.size_y + NumberRenderer.DIMENSIONS_MIN.y) / 2)),
+                        int(diff / 2), int((self.renderer.screen.size_y + NumberRenderer.DIMENSIONS_MIN.y) // 2 - NumberRenderer.DIMENSIONS_MIN.y)),
                         color=Color(0, 0, 255))
                     screen_buffer = num_renderer.render(self.high_score, renderer=self.renderer, return_as_array=True)
 
                     for x in range(self.renderer.screen.size_x):
                         for y in range(self.renderer.screen.size_y):
                             color = screen_buffer[x][y]
-                            color += Color(255, 0, 0) if img.getpixel((x, img.size[1] - y - 1)) else None
-                            self.renderer.set_led(x, y, color)
+                            color += Color(127, 0, 0) if img.getpixel((x, img.size[1] - y - 1))[:3] != (0, 0, 0) else Color(0, 0, 0)
+                            self.renderer.set_led(x, y, color.rgb())
                 else:
                     self.renderer.image(img, 0, 0)
-            except:
+            except FileNotFoundError:
                 self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.RED)
 
             """# calculates a ray between the corners

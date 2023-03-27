@@ -10,8 +10,8 @@ class CharacterRendererBase:
         """
         :param pos: Starting Position, the lower left corner
         """
-        if self.pos:
-            if int(self.pos.x) != self.pos.x or int(self.pos.y) != self.pos.y:
+        if pos:
+            if not type(pos.x) == int and type(pos.y) == int:
                 raise ValueError("Position Vector must only contain integer numbers")
             self.pos = pos
 

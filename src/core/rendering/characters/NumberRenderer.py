@@ -6,13 +6,13 @@ from core.util.Vector2D import Vector2D
 from core.rendering.renderer.RendererBase import RendererBase
 
 FONT_PATH = 'rsc//characters//'
-DIMENSIONS_MIN = Vector2D(3, 5) + Vector2D(1, 1)  # = NumberRenderer.size + NumberRenderer.padding
+DIMENSIONS_MIN = Vector2D(4, 5)  # = NumberRenderer.size + NumberRenderer.padding
 
 
 class NumberRenderer(CharacterRendererBase):
     size = Vector2D(3, 5)
     padding = Vector2D(1, 1)
-    color: Color(255, 255, 255)
+    color = Color(255, 255, 255)
     scale = 1
     auto_line_break = False
 
@@ -20,7 +20,7 @@ class NumberRenderer(CharacterRendererBase):
         super(NumberRenderer, self).__init__(pos)
 
         if color:
-            if len(color) != Color:
+            if type(color) != Color:
                 raise ValueError("color must be a color value")
             self.color = color
 
@@ -42,19 +42,19 @@ class NumberRenderer(CharacterRendererBase):
             raise ValueError("non integer numbers are not supported yet")
         if number < 0:
             raise ValueError("negative numbers are not supported yet")
-        return_array = [[0 for y in range(renderer.screen.size_y)] for x in range(renderer.screen.size_x)]
+        return_array = [[Color(0, 0, 0) for y in range(renderer.screen.size_y)] for x in range(renderer.screen.size_x)]
 
         for char in str(number):
-            t_img = Image.open(char + '.png')
+            t_img = Image.open(FONT_PATH + char + '.png')
             for x in range(self.size.x):
                 for y in range(self.size.y):
-                    if t_img.getpixel((x // self.scale, y // self.scale)):
+                    if t_img.getpixel((x // self.scale, y // self.scale))[:3] == (255, 255, 255):
                         if 0 < x + self.pos.x <= renderer.screen.size_x and \
                            0 < y + self.pos.y <= renderer.screen.size_y:
                             if return_as_array:
-                                return_array[x + self.pos.x][y + self.pos.y] = self.color
+                                return_array[x + self.pos.x][renderer.screen.size_y - y - self.pos.y] = self.color
                             else:
-                                renderer.set_led(x + self.pos.x, y + self.pos.y, self.color)
+                                renderer.set_led(x + self.pos.x, renderer.screen.size_y - y - self.pos.y, self.color)
                         else:
                             print("Current position:", str(self.pos))
                             raise Exception("Number is too large to be displayed at this position")
