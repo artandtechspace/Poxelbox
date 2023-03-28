@@ -44,9 +44,12 @@ class GameEndScene(GameScene):
                     no_numbers_max = self.renderer.screen.size_x // NumberRenderer.DIMENSIONS_MIN.x
                     diff = self.renderer.screen.size_x - no_numbers_max * NumberRenderer.DIMENSIONS_MIN.x
 
-                    num_renderer = NumberRenderer.NumberRenderer(pos=Vector2D(
-                        int(diff / 2), int((self.renderer.screen.size_y + NumberRenderer.DIMENSIONS_MIN.y) // 2 - NumberRenderer.DIMENSIONS_MIN.y)),
-                        color=Color(0, 0, 255))
+                    screen_center = Vector2D(self.renderer.screen.size_x // 2, self.renderer.screen.size_y // 2)
+
+                    score_position = Vector2D(screen_center.x - len(str(self.high_score)) * NumberRenderer.DIMENSIONS_MIN.x // 2 + diff // 2,
+                                              screen_center.y - NumberRenderer.DIMENSIONS_MIN.y // 2)
+
+                    num_renderer = NumberRenderer.NumberRenderer(pos=score_position, color=Color(0, 0, 255))
                     screen_buffer = num_renderer.render(self.high_score, renderer=self.renderer, return_as_array=True)
 
                     for x in range(self.renderer.screen.size_x):

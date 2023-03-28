@@ -49,8 +49,8 @@ class NumberRenderer(CharacterRendererBase):
             for x in range(self.size.x):
                 for y in range(self.size.y):
                     if t_img.getpixel((x // self.scale, y // self.scale))[:3] == (255, 255, 255):
-                        if 0 < x + self.pos.x <= renderer.screen.size_x and \
-                           0 < y + self.pos.y <= renderer.screen.size_y:
+                        if 0 <= x + self.pos.x < renderer.screen.size_x and \
+                           0 <= y + self.pos.y < renderer.screen.size_y:
                             if return_as_array:
                                 return_array[x + self.pos.x][renderer.screen.size_y - y - self.pos.y] = self.color
                             else:

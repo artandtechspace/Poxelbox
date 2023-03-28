@@ -32,10 +32,10 @@ und in der **Produktionsumgebung** folgende:
 **außerdem** werden folgende Packete in **beiden** Umgebungen gebraucht
 |Packet|Version|Befehl|Grund|
 |-|-|-|-|
-|[Flask](https://pypi.org/project/Flask/)|`~=2.2.2`|```pip install Flask```|Bereitstellung der Config-Schnittstelle und Hosting des Web-Config-Tools (mehr Infos unterhalb)|
-|[Pillow](https://pypi.org/project/Pillow/)|`~=9.2.0`|```pip install Pillow```|Laden von Bildern und anderen Assets für die Spiele/Animationen|
-|[NumPy](https://pypi.org/project/numpy/)|`~=1.23.3`|```pip install numpy```|Tetris... ja wirklich|
-|[varname](https://pypi.org/project/varname/)|```pip install varname```|Generische Vektoren|
+|[Flask](https://pypi.org/project/Flask/)|`≈2.2.2`|```pip install Flask```|Bereitstellung der Config-Schnittstelle und Hosting des Web-Config-Tools (mehr Infos unterhalb)|
+|[Pillow](https://pypi.org/project/Pillow/)|`≈9.2.0`|```pip install Pillow```|Laden von Bildern und anderen Assets für die Spiele/Animationen|
+|[NumPy](https://pypi.org/project/numpy/)|`≈1.23.3`|```pip install numpy```|Tetris... ja wirklich|
+|[varname](https://pypi.org/project/varname/)|`≈0.11.0`|```pip install varname```|Generische Vektoren|
 
 Um die Installationen zu vereinfachen werden hier außerdem die jeweiligen [requirements.txt](https://learnpython.com/blog/python-requirements-file/)-Dateien angegeben
 
