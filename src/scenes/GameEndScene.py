@@ -1,5 +1,7 @@
 from PIL import Image
 
+import time
+
 from config import Colors
 from core.rendering.characters import NumberRenderer
 from core.rendering.renderer.RendererBase import RendererBase
@@ -9,11 +11,14 @@ from core.util.Player import Player
 from core.scenery.SceneController import SceneController
 from core.util.Vector2D import Vector2D
 
+DELAY_TIME = 1000000000  # in ns
+
 
 class GameEndScene(GameScene):
     reload_scene: any
     won_game = False
     high_score = None
+    init_time: int
 
     # only used to set an optional high score
     def __init__(self, high_score=None):
@@ -30,6 +35,8 @@ class GameEndScene(GameScene):
         super().on_init(scene_controller, renderer, player_one, player_two)
 
         self.renderer.fill(0, 0, renderer.screen.size_x, renderer.screen.size_y, Colors.OFF)
+
+        self.init_time = time.time_ns()
 
         # when the player(s) loose
         if not self.won_game:
@@ -95,7 +102,6 @@ class GameEndScene(GameScene):
         if self.on_handle_loading_screen(button, status):
             return
 
-        # TODO: add delay before allowing to continue
-        if status:
+        if (not status) and time.time_ns() > self.init_time + DELAY_TIME:
             self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
             self.scene_controller.load_scene(self.reload_scene)

@@ -115,7 +115,7 @@ class SnakeScene(GameScene):
             self.find_new_berry()
 
     def game_over(self):
-        game_end = GameEndScene(high_score=self.player_length)
+        game_end = GameEndScene(high_score=self.player_length - PLAYER_START_LENGTH)
         game_end.reload_scene = self
         self.scene_controller.load_scene(game_end)
 
