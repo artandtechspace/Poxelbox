@@ -113,6 +113,16 @@ def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_title("Use old WS2812B-Schema?")\
         .and_then()\
         \
+        .with_string_preset(nameof(Cfg.BOX_ORIENTATION), ["(X | Y)", "(-X | Y)", "(X | -Y)", "(-X | -Y)"])\
+        .has_title("In which Orientation are all the Boxes?")\
+        .has_description("Inside a box, which axes must be inverted to match to the normal orientation? (X | Y)")\
+        .and_then()\
+        \
+        .with_bool(nameof(Cfg.BOX_HORIZONTAL)) \
+        .has_description("Is the longer side of the boxes parallel to the ground?") \
+        .has_title("Are boxes placed horizontal?") \
+        .and_then()\
+        \
         .end_category()
 
 # Event: When the config-loaders are registered

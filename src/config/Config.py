@@ -49,6 +49,10 @@ ESP_BAUD = 9600
 WALL_SIZE_X = 6
 WALL_SIZE_Y = 6
 
+# Orientation and alignment of the boxes
+BOX_ORIENTATION = "(X | Y)"
+BOX_HORIZONTAL = False
+
 # Dimensions of one Box
 BOX_SIZE_X = 3
 BOX_SIZE_Y = 4
