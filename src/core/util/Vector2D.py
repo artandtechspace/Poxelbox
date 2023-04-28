@@ -26,7 +26,10 @@ class Vector2D(Generic[T]):
             raise Exception("Vector out of bounce")
 
     def __str__(self):
-        return "( " + self.x + ", " + self.y + ")"
+        return "( " + str(self.x) + ", " + str(self.y) + ")"
+
+    def __bool__(self):
+        return hasattr(self, 'x') and hasattr(self, 'y')
 
     def __eq__(self, other_vec):
         return other_vec.x == self.x and other_vec.y == self.y
