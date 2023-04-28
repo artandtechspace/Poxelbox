@@ -3,6 +3,6 @@ src/.idea
 __pycache__/
 src/local
 .nobackup
+src/rsc/config.json
 **.pdn
-**.png
 !*x*.png
