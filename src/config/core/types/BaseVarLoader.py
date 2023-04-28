@@ -13,6 +13,7 @@ class BaseVLBuilder:
     def __init__(self, back_ref: CfgLdr.CategoryBuilder, var_name: str):
         self._var_name = var_name
         self.__back_ref = back_ref
+        self._title = None
 
     # Uses to set a title to the config-value
     def has_title(self, title: str):

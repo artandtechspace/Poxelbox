@@ -40,7 +40,7 @@ class RendererBase:
             for y in range(img.size[1]):
                 color = img.getpixel((x, y))
                 if color[3] > 0:
-                    self.set_led(x+x_start, img.size[1] - y - 1 + y_start, color)
+                    self.set_led(x+x_start, img.size[1] - y - 1 + y_start, (color[0], color[1], color[2]))
 
     def set_led(self, x: int, y: int, color: (int, int, int)):
         pass

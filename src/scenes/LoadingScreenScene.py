@@ -23,16 +23,6 @@ def allow_if(name: str, scene: GameScene, allow: bool):
         return {name: scene}
     return {}
 
-# List with instances of every scene that has a preview
-SCENES = {
-    **allow_if("snake", SnakeScene.SnakeScene(), Cfg.SNAKE_ENABLED),
-    **allow_if("tetris", TetrisScene.TetrisScene(), Cfg.TETRIS_ENABLED),
-    **allow_if("pong", PongScene.PongScene(), Cfg.PONG_ENABLED),
-    **allow_if("minesweeper", MinesweeperScene(), Cfg.MINESWEEPER_ENABLED),
-    **allow_if("draw", DrawScene(), Cfg.DRAW_ENABLED),
-    **allow_if("rgb-spiral", RGB_Spiral(), Cfg.RGB_SPIRAL_ENABLED)
-}
-
 # Keys to use for starting the selected scene
 START_KEYS = [Keys.BTN_START, Keys.BTN_SELECT, Keys.BTN_A]
 # Color of the arrow
@@ -42,6 +32,18 @@ ARROW_COLOR = Colors.WHITE
 ARROW = "rsc//previews//arrow.png"
 PREVIEW_PATHS = "rsc//previews"
 
+# Generates the loadable-scenes (Selectable on the loading screen)
+def init_loading_screen():
+    global SCENES
+
+    SCENES = {
+        **allow_if("snake", SnakeScene.SnakeScene(), Cfg.SNAKE_ENABLED),
+        **allow_if("tetris", TetrisScene.TetrisScene(), Cfg.TETRIS_ENABLED),
+        **allow_if("pong", PongScene.PongScene(), Cfg.PONG_ENABLED),
+        **allow_if("minesweeper", MinesweeperScene(), Cfg.MINESWEEPER_ENABLED),
+        **allow_if("draw", DrawScene(), Cfg.DRAW_ENABLED),
+        **allow_if("rgb-spiral", RGB_Spiral(), Cfg.RGB_SPIRAL_ENABLED)
+    }
 
 class LoadingScreenScene(SceneBase):
     # Preview-Images for the scenes (May contain an image for a scene or may not (Depending on if one exists)

@@ -40,7 +40,7 @@ PONG_SPEED = 0.1
 
 
 # How many screen-pixels one poxel-pixel takes up on the pygame-renderer
-LED_PIXEL_SCALE = 60
+LED_PIXEL_SCALE = 30
 
 # Serial-Baud rate that the esp32 uses for the serial-userinput connection
 ESP_BAUD = 9600
