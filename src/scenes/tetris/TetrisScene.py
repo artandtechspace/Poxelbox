@@ -19,6 +19,7 @@ COLLISION_WALL_LEFT = 3
 COLLISION_WALL_BOTTOM = 4
 NO_COLLISION = 0
 
+
 class TetrisScene(GameScene):
     # Grid with the game_field
     game_field: [[int]]
@@ -30,6 +31,7 @@ class TetrisScene(GameScene):
     spawn_counter: int
     # Flag used to prevent the player from moving already dropped pieces between ticks
     piece_got_dropped: bool = False
+    score: int
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
@@ -37,6 +39,7 @@ class TetrisScene(GameScene):
         self.scene_controller = scene_controller
 
         self.reset_game()
+        self.score = 0
 
     def get_time_constant(self):
         return Cfg.TETRIS_SPEED  # NOTE: Maybe change to self.game_speed
@@ -223,6 +226,7 @@ class TetrisScene(GameScene):
 
         # Checks if there were any changes
         if amt > 0:
+            self.score += 2 * amt - 1
             # Rerenders the whole game-grid
             for y in range(self.renderer.screen.size_y):
                 for x in range(self.renderer.screen.size_x):
@@ -245,7 +249,7 @@ class TetrisScene(GameScene):
 
     # Executes once the game is game over for the player
     def game_over(self):
-        game_end = GameEndScene()
+        game_end = GameEndScene(high_score=self.score)
         game_end.reload_scene = self
         self.scene_controller.load_scene(game_end)
 

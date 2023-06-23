@@ -12,7 +12,10 @@ class RendererBase:
         pass
 
     def setup(self):
-        self.screen = Screen(3 * Cfg.WALL_SIZE_X, 4 * Cfg.WALL_SIZE_Y)
+        if not Cfg.BOX_HORIZONTAL:
+            self.screen = Screen(Cfg.BOX_SIZE_X * Cfg.WALL_SIZE_X, Cfg.BOX_SIZE_Y * Cfg.WALL_SIZE_Y)
+        else:
+            self.screen = Screen(Cfg.BOX_SIZE_Y * Cfg.WALL_SIZE_X, Cfg.BOX_SIZE_X * Cfg.WALL_SIZE_Y)
 
     def clear_screen(self):
         self.fill(0,0,self.screen.size_x,self.screen.size_y, (0,0,0))
