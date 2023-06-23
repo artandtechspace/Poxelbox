@@ -2,27 +2,29 @@ import config.Config as Cfg
 import config.core.ConfigLoader as CfgLdr
 
 class BaseVLBuilder:
-    # Basic stats of the var-loader
-    _var_name: str
-    _title: str
-    _description: str
-
-    # Reference back to the config-loader-builder
-    __back_ref: CfgLdr.CategoryBuilder
-
     def __init__(self, back_ref: CfgLdr.CategoryBuilder, var_name: str):
-        self._var_name = var_name
+        # Reference back to the config-loader-builder
         self.__back_ref = back_ref
-        self._title = None
 
-    # Uses to set a title to the config-value
+        # Basic stats of the var-loader
+        self._var_name = var_name
+        self._title = None
+        self._link = None
+        self._description = None
+
+    # Used to set a title to the config-value
     def has_title(self, title: str):
         self._title = title
         return self
 
-    # Uses to set a description to the config-value
+    # Used to set a description to the config-value
     def has_description(self, desc: str):
         self._description = desc
+        return self
+
+    # Used to add an optional link that has an explanation for this property
+    def has_link(self, link: str):
+        self._link = link
         return self
 
     # Continues to add more values
@@ -41,11 +43,13 @@ class BaseVarLoader:
     __title: str
     __description: str
     __type: str
+    __link: str
 
-    def __init__(self, var_name: str, title: str = None, description: str = None):
+    def __init__(self, var_name: str, title: str = None, description: str = None, link: str = None):
         self.__var_name = var_name
         self.__title = title
         self.__description = description
+        self.__link = link
 
     def get_type(self):
         raise NotImplementedError()
@@ -65,5 +69,6 @@ class BaseVarLoader:
             "value": self.to_json(),
             "title": self.__title,
             "desc": self.__description,
-            "type": self.get_type()
+            "type": self.get_type(),
+            "link": self.__link if self.__link is not None else None
         }

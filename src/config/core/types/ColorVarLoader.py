@@ -19,13 +19,13 @@ class ColorVLBuilder(BaseVL.BaseVLBuilder):
         super().__init__(back_ref, var_name)
 
     def export_end(self):
-        return ColorVarLoader(self._var_name, self._title, self._description)
+        return ColorVarLoader(self._var_name, self._title, self._description, self._link)
 
 
 class ColorVarLoader(BaseVL.BaseVarLoader):
 
-    def __init__(self, var_name: str, title: str = None, description: str = None):
-        super().__init__(var_name, title, description)
+    def __init__(self, var_name: str, title: str = None, description: str = None, link: str = None):
+        super().__init__(var_name, title, description, link)
 
     def get_type(self):
         return "color"

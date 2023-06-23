@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import json
+from core.util.DictUtil import delete_none
 
 if TYPE_CHECKING:
     import config.core.types.IntVarLoader as IntVL
@@ -113,7 +114,7 @@ class Category:
         exp = {}
 
         for key in self.__values:
-            exp[key] = self.__values[key].export_full()
+            exp[key] = delete_none(self.__values[key].export_full())
 
         return exp
 

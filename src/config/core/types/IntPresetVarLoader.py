@@ -11,14 +11,14 @@ class IntPresetVLBuilder(BaseVL.BaseVLBuilder):
         self.__presets = presets
 
     def export_end(self):
-        return IntPresetVarLoader(self._var_name, self._title, self._description, self.__presets)
+        return IntPresetVarLoader(self._var_name, self._title, self._description, self._link, self.__presets)
 
 class IntPresetVarLoader(BaseVL.BaseVarLoader):
 
     presets: [int]
 
-    def __init__(self, var_name: str, title: str = None, description: str = None, presets: [int] = None):
-        super().__init__(var_name, title, description)
+    def __init__(self, var_name: str, title: str = None, description: str = None, link: str = None, presets: [int] = None):
+        super().__init__(var_name, title, description, link)
 
         self.presets = presets
 

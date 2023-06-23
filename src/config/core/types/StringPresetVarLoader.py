@@ -11,14 +11,14 @@ class StringPresetVLBuilder(BaseVL.BaseVLBuilder):
         self.__presets = presets
 
     def export_end(self):
-        return StringPresetVarLoader(self._var_name, self._title, self._description, self.__presets)
+        return StringPresetVarLoader(self._var_name, self._title, self._description, self._link, self.__presets)
 
 
 class StringPresetVarLoader(BaseVL.BaseVarLoader):
     presets: [str]
 
-    def __init__(self, var_name: str, title: str = None, description: str = None, presets: [str] = None):
-        super().__init__(var_name, title, description)
+    def __init__(self, var_name: str, title: str = None, description: str = None, link: str = None, presets: [str] = None):
+        super().__init__(var_name, title, description, link)
 
         self.presets = presets
 

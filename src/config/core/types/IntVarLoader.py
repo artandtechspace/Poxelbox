@@ -18,14 +18,14 @@ class IntVLBuilder(BaseVL.BaseVLBuilder):
         return self
 
     def export_end(self):
-        return IntVarLoader(self._var_name, self._title, self._description, self.__min, self.__max)
+        return IntVarLoader(self._var_name, self._title, self._description, self._link, self.__min, self.__max)
 
 class IntVarLoader(BaseVL.BaseVarLoader):
     min: int
     max: int
 
-    def __init__(self, var_name: str, title: str = None, description: str = None, min: int = None, max: int = None):
-        super().__init__(var_name, title, description)
+    def __init__(self, var_name: str, title: str = None, description: str = None, link: str = None, min: int = None, max: int = None):
+        super().__init__(var_name, title, description, link)
 
         self.min = min
         self.max = max

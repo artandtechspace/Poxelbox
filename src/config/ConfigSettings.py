@@ -77,11 +77,13 @@ def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_max(100)\
         .has_title("PyGame-Pixel-Scale")\
         .has_description("How many Screen-Pixel one Game-Pixel uses")\
+        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#pygame-pixel-scale")\
         .and_then()\
         \
         .with_int_preset(nameof(Cfg.ESP_BAUD), [115200, 9600])\
         .has_title("Esp-Baud")\
         .has_description("Baud-rate that is used to communicate with the Esp32")\
+        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#esp-baud")\
         .and_then()\
         \
         .with_int(nameof(Cfg.WALL_SIZE_X))\
@@ -89,6 +91,7 @@ def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_max(10)\
         .has_title("Wall-Size (X)")\
         .has_description("Of how many cubes (on the x axis) does the wall consist?")\
+        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#wall-size-xy")\
         .and_then()\
         \
         .with_int(nameof(Cfg.WALL_SIZE_Y))\
@@ -96,21 +99,25 @@ def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_max(10)\
         .has_title("Wall-Size (Y)")\
         .has_description("Of how many cubes (on the y axis) does the wall consist?")\
+        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#wall-size-xy")\
         .and_then()\
         \
         .with_bool(nameof(Cfg.IS_DEVELOPMENT_ENVIRONMENT))\
         .has_title("Is Dev-Environment?")\
         .has_description("Is the software running in development (True) or production (False) mode?")\
+        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#is-dev-environment")\
         .and_then()\
         \
         .with_bool(nameof(Cfg.USE_TEST_SCENE))\
         .has_title("Use test scene?")\
         .has_description("Shall the test-screen-scene be loaded instead of the normal start scene?")\
+        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#use-test-scene")\
         .and_then()\
         \
         .with_bool(nameof(Cfg.USE_OLD_WS2812B_CONNECTION_TYPE))\
         .has_description("If the old ws2812b connection schema or the new one should be used.")\
         .has_title("Use old WS2812B-Schema?")\
+        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#use-old-ws2812b-schema")\
         .and_then()\
         \
         .end_category()
