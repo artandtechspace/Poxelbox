@@ -38,7 +38,7 @@ class WS2812BRenderer(RendererBase):
         if x >= self.screen.size_x or y >= self.screen.size_y:
             return
 
-        if len(color != 3) or color[0] > 255 or color[0] < 0 or color[1] > 255 or color[1] < 0 or color[2] > 255 or color[2] < 0:
+        if len(color) != 3 or color[0] > 255 or color[0] < 0 or color[1] > 255 or color[1] < 0 or color[2] > 255 or color[2] < 0:
             print("INVALID COLOR: ",color)
 
         # Sets the given pixel
