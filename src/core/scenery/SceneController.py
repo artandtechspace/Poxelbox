@@ -31,8 +31,18 @@ class SceneController:
     def load_scene(self, next_scene: any):
         self.scene = next_scene
 
-        # Init's the game
-        self.scene.on_init(self, self.rdr, self.players[0], self.players[1])
+        # Unit's the game
+        try:
+            self.scene.on_init(self, self.rdr, self.players[0], self.players[1])
+        except:
+            self.__on_scene_crash()
+            return
+
+    # Execute whenever a scene crashes do to some error
+    def __on_scene_crash(self):
+        # Sends the player to the crash-scene
+        from scenes.CrashedScreenScene import CrashedScreenScene
+        self.load_scene(CrashedScreenScene())
 
     # Executes when any users control's change
     def __on_raw_player_input(self, status: int):
@@ -42,7 +52,12 @@ class SceneController:
 
     # Executes when the player triggers a button or releases a button
     def __on_player_input(self, player, button, status):
-        self.scene.on_player_input(player, button, status)
+        # Executes the scene loop
+        try:
+            self.scene.on_player_input(player, button, status)
+        except:
+            self.__on_scene_crash()
+            return
 
     # Must be executed before the run-method is executed. Prepares the pi for rendering and other stuff
     def prepare(self):
@@ -63,6 +78,10 @@ class SceneController:
             # Updates the time before any rendering is done
             self.last_exec = clc_time + self.scene.get_time_constant()
             # Executes the scene loop
-            self.scene.on_update()
+            try:
+                self.scene.on_update()
+            except:
+                self.__on_scene_crash()
+                return
 
         time.sleep(0.05)
