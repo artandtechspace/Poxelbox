@@ -39,7 +39,8 @@ class WS2812BRenderer(RendererBase):
             return
 
         if len(color) != 3 or color[0] > 255 or color[0] < 0 or color[1] > 255 or color[1] < 0 or color[2] > 255 or color[2] < 0:
-            print("INVALID COLOR: ",color)
+            print("INVALID COLOR: ", color)
+            return
 
         # Sets the given pixel
         self.__pixels[self.__get_pixel_id_old(x, y) if Cfg.USE_OLD_WS2812B_CONNECTION_TYPE else self.__get_pixel_id(x, y)] = color
