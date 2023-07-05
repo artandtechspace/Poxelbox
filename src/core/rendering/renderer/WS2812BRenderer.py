@@ -20,13 +20,16 @@ class WS2812BRenderer(RendererBase):
 
         # TOD0: Allow different orientations for each box
 
-        if "X" == Cfg.BOX_ORIENTATION[1]:   # (X | Y)
-            if "Y" == Cfg.BOX_ORIENTATION[5]:
+        if Cfg.BOX_HORIZONTAL:
+            Cfg.BOX_FLIPPED_H = not Cfg.BOX_FLIPPED_H
+
+        if Cfg.BOX_FLIPPED_H:   # (X | Y)
+            if Cfg.BOX_FLIPPED_V:
                 self.__rel_idx__ = rel_idx
             else:
                 self.__rel_idx__ = lambda rel_x, rel_y: rel_idx(rel_x, Cfg.BOX_SIZE_Y-1-rel_y)
         else:                               # (-X | Y)
-            if "Y" == Cfg.BOX_ORIENTATION[6]:
+            if Cfg.BOX_FLIPPED_V:
                 self.__rel_idx__ = lambda rel_x, rel_y: rel_idx(Cfg.BOX_SIZE_X-1-rel_x, rel_y)
             else:
                 self.__rel_idx__ = lambda rel_x, rel_y: rel_idx(Cfg.BOX_SIZE_X-1-rel_x, Cfg.BOX_SIZE_Y-1-rel_y)
@@ -35,7 +38,8 @@ class WS2812BRenderer(RendererBase):
 
     def set_led(self, x: int, y: int, color: (int, int, int)):
         # Ensures the position is on screen
-        if x >= self.screen.size_x or y >= self.screen.size_y:
+        if x >= self.screen.size_x or y >= self.screen.size_y or x < 0 or y < 0:
+            print("Out of range!!! x:", x, " y:", y)
             return
 
         if len(color) != 3 or color[0] > 255 or color[0] < 0 or color[1] > 255 or color[1] < 0 or color[2] > 255 or color[2] < 0:

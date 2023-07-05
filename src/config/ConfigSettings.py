@@ -69,6 +69,41 @@ def register_rgb_spiral_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .and_then()\
         .end_category()
 
+def register_box_layout(loader: CfgLdr.ConfigLoaderBuilder):
+    return loader.in_category("Box-layout") \
+        .with_int(nameof(Cfg.WALL_SIZE_X)) \
+        .has_min(1) \
+        .has_max(10) \
+        .has_title("Wall-Size (X)") \
+        .has_description("Of how many cubes (on the x axis) does the wall consist?") \
+        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#wall-size-xy") \
+        .and_then()\
+        \
+        .with_int(nameof(Cfg.WALL_SIZE_Y)) \
+        .has_min(1) \
+        .has_max(10) \
+        .has_title("Wall-Size (Y)") \
+        .has_description("Of how many cubes (on the y axis) does the wall consist?") \
+        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#wall-size-xy") \
+        .and_then()\
+        \
+        .with_bool(nameof(Cfg.BOX_FLIPPED_H)) \
+        .has_description("Inverts the relative x-coordinates for each box") \
+        .has_title("Flip each box over the y-axis")\
+        .and_then()\
+        \
+        .with_bool(nameof(Cfg.BOX_FLIPPED_V))\
+        .has_description("Inverts the relative y-coordinates for each box")\
+        .has_title("Flip each box over the x-axis")\
+        .and_then()\
+        \
+        .with_bool(nameof(Cfg.BOX_HORIZONTAL))\
+        .has_description("Is the longer side of the boxes parallel to the ground?")\
+        .has_title("Are boxes placed horizontal?")\
+        .and_then()\
+        \
+        .end_category()
+
 def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
     return loader.in_category("General-Settings")\
         \
@@ -86,22 +121,6 @@ def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#esp-baud")\
         .and_then()\
         \
-        .with_int(nameof(Cfg.WALL_SIZE_X))\
-        .has_min(1)\
-        .has_max(10)\
-        .has_title("Wall-Size (X)")\
-        .has_description("Of how many cubes (on the x axis) does the wall consist?")\
-        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#wall-size-xy")\
-        .and_then()\
-        \
-        .with_int(nameof(Cfg.WALL_SIZE_Y))\
-        .has_min(1)\
-        .has_max(10)\
-        .has_title("Wall-Size (Y)")\
-        .has_description("Of how many cubes (on the y axis) does the wall consist?")\
-        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#wall-size-xy")\
-        .and_then()\
-        \
         .with_bool(nameof(Cfg.IS_DEVELOPMENT_ENVIRONMENT))\
         .has_title("Is Dev-Environment?")\
         .has_description("Is the software running in development (True) or production (False) mode?")\
@@ -114,16 +133,6 @@ def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#use-test-scene")\
         .and_then()\
         \
-        .with_string_preset(nameof(Cfg.BOX_ORIENTATION), ["(X | Y)", "(-X | Y)", "(X | -Y)", "(-X | -Y)"])\
-        .has_title("In which Orientation are all the Boxes?")\
-        .has_description("Inside a box, which axes must be inverted to match to the normal orientation? (X | Y)")\
-        .and_then()\
-        \
-        .with_bool(nameof(Cfg.BOX_HORIZONTAL)) \
-        .has_description("Is the longer side of the boxes parallel to the ground?") \
-        .has_title("Are boxes placed horizontal?") \
-        .and_then()\
-        \
         .end_category()
 
 # Event: When the config-loaders are registered
@@ -131,6 +140,7 @@ def register_on_loader():
     loader = CfgLdr.ConfigLoaderBuilder()
 
     loader = register_settings_loader(loader)
+    loader = register_box_layout(loader)
     loader = register_snake_loader(loader)
     loader = register_pong_loader(loader)
     loader = register_tetris_loader(loader)
