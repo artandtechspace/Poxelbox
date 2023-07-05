@@ -114,12 +114,6 @@ def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#use-test-scene")\
         .and_then()\
         \
-        .with_bool(nameof(Cfg.USE_OLD_WS2812B_CONNECTION_TYPE))\
-        .has_description("If the old ws2812b connection schema or the new one should be used.")\
-        .has_title("Use old WS2812B-Schema?")\
-        .has_link("https://github.com/artandtechspace/Poxelbox-Dokumentation#use-old-ws2812b-schema")\
-        .and_then()\
-        \
         .with_string_preset(nameof(Cfg.BOX_ORIENTATION), ["(X | Y)", "(-X | Y)", "(X | -Y)", "(-X | -Y)"])\
         .has_title("In which Orientation are all the Boxes?")\
         .has_description("Inside a box, which axes must be inverted to match to the normal orientation? (X | Y)")\

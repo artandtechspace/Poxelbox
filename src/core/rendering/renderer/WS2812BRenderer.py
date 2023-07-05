@@ -43,49 +43,10 @@ class WS2812BRenderer(RendererBase):
             return
 
         # Sets the given pixel
-        self.__pixels[self.__get_pixel_id_old(x, y) if Cfg.USE_OLD_WS2812B_CONNECTION_TYPE else self.__get_pixel_id(x, y)] = color
+        self.__pixels[self.__get_pixel_id(x, y)] = color
 
     def push_leds(self):
         self.__pixels.show()
-
-    '''
-    Method that takes in an x and y coordinate, calculates the exact pixel-id on the strip and returns it
-    '''
-    def __get_pixel_id_old(self, x: int, y: int):
-        # Which box position on the wall this pixel belongs to
-        # Pixel x = 7 would mean the 3rd box on the wall
-        box_x = x // 3
-        box_y = y // 4
-
-        # Offset of the pixel from it's base box
-        # x = 7 would mean an offset of 1
-        offset_from_box_x = x - box_x * 3
-        offset_from_box_y = y - box_y * 4
-
-        # Calculates the amount of leds that got skipped by all boxes that came before the current one
-        skipped_led_boxes = (box_x * Cfg.WALL_SIZE_Y + (
-            # Bottom start
-            (
-                box_y
-            )
-            # Checks if the current column started from the bottom or top
-            if box_x & 1 == 0 else
-            # Top-start
-            (
-                (Cfg.WALL_SIZE_Y - box_y - 1)
-            )
-        )) * 3 * 4
-
-        if offset_from_box_x == 2:
-            return skipped_led_boxes + offset_from_box_y + 4
-
-        factor = - offset_from_box_y * (1 if offset_from_box_x == 0 else 3)
-
-        base = - int(offset_from_box_y < 2) * (10 if offset_from_box_x == 0 else 14)
-
-        offset_range = 12 if offset_from_box_x == 0 else 17
-
-        return skipped_led_boxes + factor + offset_range + base
 
     def __get_pixel_id(self, x: int, y: int):
         """
@@ -109,20 +70,20 @@ class WS2812BRenderer(RendererBase):
 
         # Number of Pixel that came before the box the pixel (x, y) ist located in
         # Columns that must have been skipped based on the X-coordinate
-        box_px_offset = box_x * (Cfg.WALL_SIZE_Y * Cfg.PX_PER_BOX)
+        box_offset = box_x * Cfg.WALL_SIZE_Y
 
         # Handles the alternating direction of the XLR-cables
         if box_x % 2 == 0:
             # for even amounts of columns
-            # box_px_offset directly corresponds to the Y-coordinate
-            box_px_offset += box_y * Cfg.PX_PER_BOX
+            # box_offset directly corresponds to the Y-coordinate
+            box_offset += box_y
 
         else:
             # for odd amounts of columns
-            # box_px_offset directly corresponds to the wall height minus Y-coordinate
-            box_px_offset += (Cfg.WALL_SIZE_Y - 1 - box_y) * Cfg.PX_PER_BOX
+            # box_offset directly corresponds to the wall height minus Y-coordinate
+            box_offset += Cfg.WALL_SIZE_Y - 1 - box_y
 
         # The final ID is the offset of the Box plus the offset in the box itself
         if Cfg.BOX_HORIZONTAL:
-            return box_px_offset + self.__rel_idx__(y % Cfg.BOX_SIZE_X, x % Cfg.BOX_SIZE_Y)
-        return box_px_offset + self.__rel_idx__(x % Cfg.BOX_SIZE_X, y % Cfg.BOX_SIZE_Y)
+            return box_offset * Cfg.PX_PER_BOX + self.__rel_idx__(y % Cfg.BOX_SIZE_X, x % Cfg.BOX_SIZE_Y)
+        return box_offset * Cfg.PX_PER_BOX + self.__rel_idx__(x % Cfg.BOX_SIZE_X, y % Cfg.BOX_SIZE_Y)

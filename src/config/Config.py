@@ -63,6 +63,3 @@ IS_DEVELOPMENT_ENVIRONMENT = False
 
 # If the test-scene scene shall be used when running the software
 USE_TEST_SCENE = False
-
-# WS2812B-Connection-type
-USE_OLD_WS2812B_CONNECTION_TYPE = False
