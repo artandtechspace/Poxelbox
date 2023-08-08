@@ -63,7 +63,7 @@ class GameEndScene(GameScene):
                     for x in range(self.renderer.screen.size_x):
                         for y in range(self.renderer.screen.size_y):
                             color = screen_buffer[x][y]
-                            color += Color(127, 0, 0) if img.getpixel((x, img.size[1] - y - 1))[:3] != (
+                            color += Color(205, 44, 44) if img.getpixel((x, img.size[1] - y - 1))[:3] != (
                             0, 0, 0) else Color(0, 0, 0)
                             self.renderer.set_led(x, y, color.rgb())
                 else:
