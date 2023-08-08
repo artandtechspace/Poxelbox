@@ -32,8 +32,6 @@ class BoxSchemaRendererBase(RendererBase):
             else:
                 self.__rel_idx__ = lambda rel_x, rel_y: rel_idx(Cfg.BOX_SIZE_X - 1 - rel_x, Cfg.BOX_SIZE_Y - 1 - rel_y)
 
-
-
     def set_box_schema_led(self, idx: int, color: (int, int, int)):
         """
         Takes in the box-schema index and the color to set that pixel to.

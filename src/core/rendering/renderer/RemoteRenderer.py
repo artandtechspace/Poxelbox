@@ -1,4 +1,5 @@
 import json
+import time
 
 from core.rendering.renderer.BoxSchemaRendererBase import BoxSchemaRendererBase
 import asyncio
@@ -10,7 +11,7 @@ from threading import Lock
 PKT_SET_COLOR = 1
 PKT_SET_IDX = 0
 PKT_INIT = 2
-
+PKT_OPTIONAL_KEEP_ALIVE = 3
 
 class RemoteRenderer(BoxSchemaRendererBase):
 
@@ -59,7 +60,7 @@ class RemoteRenderer(BoxSchemaRendererBase):
         # Blocks any other clients from connecting
         self.has_connection = True
 
-        # Resets some inital values
+        # Resets some initial values
         self.last_color = 0
 
         print("Display connected")
@@ -75,6 +76,9 @@ class RemoteRenderer(BoxSchemaRendererBase):
             self.last_color = color
             await websocket.send(pkt)
             self.lock.release()
+
+            # Time when the last update got send
+            update_time = time.time()+1
 
             while True:
                 # Ensures a small timeout
@@ -97,11 +101,21 @@ class RemoteRenderer(BoxSchemaRendererBase):
                     pkt, color = self.convert_to_packet(update, self.last_color)
                     self.last_color = color
                     await websocket.send(pkt)
+
+                    # Resets the update time
+                    update_time = time.time()+1
                 else:
                     # Thread-safety
                     self.lock.release()
+
+                    # Sends an optional keep alive if the time has been reached
+                    if time.time() > update_time:
+                        await websocket.send(bytearray([PKT_OPTIONAL_KEEP_ALIVE]))
+
+                        # Resets the update time
+                        update_time = time.time() + 1
         except Exception as e:
-            print("Websocket-client disconnected ", e)
+            print("Display disconnected ", e)
             # Client has disconnected, releasing the has-connection flag
             self.has_connection = False
 
@@ -151,9 +165,13 @@ class RemoteRenderer(BoxSchemaRendererBase):
         # Iterates over all entry's
         for idx in clrs:
             raw = clrs[idx]
+            
+            red = int(raw[0])
+            green = int(raw[1])
+            blue = int(raw[2])
 
             # Calculates the hex color
-            hex_clr = raw[0] | (raw[1] << 8) | (raw[2] << 16)
+            hex_clr = red | (green << 8) | (blue << 16)
 
             # Appends the color to the mapping-array
             if hex_clr not in mapping:
