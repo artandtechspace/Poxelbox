@@ -13,6 +13,7 @@ PKT_SET_IDX = 0
 PKT_INIT = 2
 PKT_OPTIONAL_KEEP_ALIVE = 3
 
+
 class RemoteRenderer(BoxSchemaRendererBase):
 
     def __init__(self):
@@ -78,7 +79,7 @@ class RemoteRenderer(BoxSchemaRendererBase):
             self.lock.release()
 
             # Time when the last update got send
-            update_time = time.time()+1
+            update_time = time.time() + 1
 
             while True:
                 # Ensures a small timeout
@@ -103,7 +104,7 @@ class RemoteRenderer(BoxSchemaRendererBase):
                     await websocket.send(pkt)
 
                     # Resets the update time
-                    update_time = time.time()+1
+                    update_time = time.time() + 1
                 else:
                     # Thread-safety
                     self.lock.release()
@@ -165,7 +166,7 @@ class RemoteRenderer(BoxSchemaRendererBase):
         # Iterates over all entry's
         for idx in clrs:
             raw = clrs[idx]
-            
+
             red = int(raw[0])
             green = int(raw[1])
             blue = int(raw[2])

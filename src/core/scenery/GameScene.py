@@ -19,12 +19,12 @@ class GameScene(SceneBase):
 
     # Checks if the input was the loading-screen and if so loads the loading screen as a scene
     # Returns true if the loading screen got loaded
-    def on_handle_loading_screen(self, button: int, status: bool):
+    def on_handle_loading_screen(self, button: int, status: bool, set_scene = None):
         # Checks if select got pressed
         if button == Controller.BTN_SELECT and status:
             # Opens the loading screen scene
             from scenes.LoadingScreenScene import LoadingScreenScene
-            self.scene_controller.load_scene(LoadingScreenScene(self))
+            self.scene_controller.load_scene(LoadingScreenScene(self if set_scene is None else set_scene))
             return True
 
         return False

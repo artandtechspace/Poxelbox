@@ -11,7 +11,7 @@ from core.util.Player import Player
 from core.scenery.SceneController import SceneController
 from core.util.Vector2D import Vector2D
 
-DELAY_TIME = 1000000000  # in ns
+DELAY_TIME = 250_000  # in ms
 
 
 class GameEndScene(GameScene):
@@ -36,7 +36,7 @@ class GameEndScene(GameScene):
 
         self.renderer.fill(0, 0, renderer.screen.size_x, renderer.screen.size_y, Colors.OFF)
 
-        self.init_time = time.time_ns()
+        self.init_time = time.time_ns() + 1000 * DELAY_TIME
 
         # when the player(s) loose
         if not self.won_game:
@@ -53,16 +53,18 @@ class GameEndScene(GameScene):
 
                     screen_center = Vector2D(self.renderer.screen.size_x // 2, self.renderer.screen.size_y // 2)
 
-                    score_position = Vector2D(screen_center.x - len(str(self.high_score)) * NumberRenderer.DIMENSIONS_MIN.x // 2 + diff // 2,
-                                              screen_center.y - NumberRenderer.DIMENSIONS_MIN.y // 2)
+                    score_position = Vector2D(
+                        screen_center.x - len(str(self.high_score)) * NumberRenderer.DIMENSIONS_MIN.x // 2 + diff // 2,
+                        screen_center.y - NumberRenderer.DIMENSIONS_MIN.y // 2)
 
-                    num_renderer = NumberRenderer.NumberRenderer(pos=score_position, color=Color(0, 0, 255))
+                    num_renderer = NumberRenderer.NumberRenderer(pos=score_position, color=Color(255, 255, 255))
                     screen_buffer = num_renderer.render(self.high_score, renderer=self.renderer, return_as_array=True)
 
                     for x in range(self.renderer.screen.size_x):
                         for y in range(self.renderer.screen.size_y):
                             color = screen_buffer[x][y]
-                            color += Color(127, 0, 0) if img.getpixel((x, img.size[1] - y - 1))[:3] != (0, 0, 0) else Color(0, 0, 0)
+                            color += Color(127, 0, 0) if img.getpixel((x, img.size[1] - y - 1))[:3] != (
+                            0, 0, 0) else Color(0, 0, 0)
                             self.renderer.set_led(x, y, color.rgb())
                 else:
                     self.renderer.image(img, 0, 0)
@@ -99,9 +101,14 @@ class GameEndScene(GameScene):
         return .1
 
     def on_player_input(self, player: Player, button: int, status: bool):
-        if self.on_handle_loading_screen(button, status):
+
+        if self.on_handle_loading_screen(button, status, self.reload_scene):
             return
 
-        if (not status) and time.time_ns() > self.init_time + DELAY_TIME:
+        # Only acts on button up
+        if status:
+            return
+
+        if time.time_ns() > self.init_time:
             self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
             self.scene_controller.load_scene(self.reload_scene)
