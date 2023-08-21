@@ -83,9 +83,13 @@ def initalize():
     if Cfg.IS_DEVELOPMENT_ENVIRONMENT:
         from core.rendering.renderer.PyGameRenderer import PyGameRenderer
         from core.userinput.PyGameUserInput import PyGameUserInput
+        from core.userinput.RemoteUserInput import RemoteUserInput
+        from core.rendering.renderer.RemoteRenderer import RemoteRenderer
 
         renderer = PyGameRenderer()
         input_method = PyGameUserInput()
+        """renderer = PyGameRenderer()
+        input_method = PyGameUserInput()"""
     # Pi-env
     else:
         from core.rendering.renderer.WS2812BRenderer import WS2812BRenderer

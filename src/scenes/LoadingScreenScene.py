@@ -17,11 +17,13 @@ from scenes.tetris import TetrisScene
 from scenes.pong import PongScene
 from scenes.minesweeper.MinesweeperScene import MinesweeperScene
 
+
 # Used to register games based on the config
 def allow_if(name: str, scene: GameScene, allow: bool):
     if allow:
         return {name: scene}
     return {}
+
 
 # Keys to use for starting the selected scene
 START_KEYS = [Keys.BTN_START, Keys.BTN_SELECT, Keys.BTN_A]
@@ -31,6 +33,9 @@ ARROW_COLOR = Colors.WHITE
 # Resource-locations
 ARROW = "rsc//previews//arrow.png"
 PREVIEW_PATHS = "rsc//previews"
+
+SCENES: {str: GameScene}
+
 
 # Generates the loadable-scenes (Selectable on the loading screen)
 def init_loading_screen():
@@ -44,6 +49,7 @@ def init_loading_screen():
         **allow_if("draw", DrawScene(), Cfg.DRAW_ENABLED),
         **allow_if("rgb-spiral", RGB_Spiral(), Cfg.RGB_SPIRAL_ENABLED)
     }
+
 
 class LoadingScreenScene(SceneBase):
     # Preview-Images for the scenes (May contain an image for a scene or may not (Depending on if one exists)

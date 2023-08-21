@@ -13,114 +13,103 @@ BACKGROUND_COLOR = Colors.OFF
 BERRY_COLOR = Colors.MAGENTA
 PLAYER_COLOR = Colors.YELLOW
 PLAYER_COLOR_HEAD = Colors.ORANGE
-PLAYER_START_LENGTH = 3
 
 # Control-pad-buttons
-CONTROL_PAD_BUTTONS = [Controller.BTN_RIGHT, Controller.BTN_LEFT, Controller.BTN_UP, Controller.BTN_DOWN]
+DIRECTION_BUTTON_MAPPINGS = {
+    Controller.BTN_DOWN: Vector2D[int](0, -1),
+    Controller.BTN_RIGHT: Vector2D[int](1, 0),
+    Controller.BTN_LEFT: Vector2D[int](-1, 0),
+    Controller.BTN_UP: Vector2D[int](0, 1),
+}
 
 
 class SnakeScene(GameScene):
-    pressed_button: int
-    player_length: int
-    player_head_pos: Vector2D[int]
-    player_body_pos: [Vector2D[int]]
+    # Array with positions that the snake occupies
+    snake_body: [Vector2D[int]]
+
+    # Position of the berry which the snake must eat
     berry_pos: Vector2D[int]
-    moves: int
-    direction: Vector2D
+
+    # Vector for the move direction of the snake
+    direction: Vector2D[int] | None
+    # Vector for the wanted next position of the snake
+    wanted_direction: Vector2D[int] | None
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
         super().on_init(scene_controller, renderer, player_one, player_two)
         self.scene_controller = scene_controller
 
-        self.restart()
+        # Start head position of the snake
+        start = Vector2D[int](int(self.renderer.screen.size_x / 2), int(self.renderer.screen.size_y / 2))
 
-    def restart(self):
-        self.pressed_button = Controller.BTN_UP
-        self.player_length = PLAYER_START_LENGTH
-        self.moves = 0
-        self.direction = Vector2D(0, 1)
+        self.snake_body = [
+            # First three body positions
+            start,
+            start.copy_and_add(y=1),
+            start.copy_and_add(y=2)
+        ]
+        # Finds the first berry pos
+        self.reset_berry()
+        # Sets the initial direction
+        self.direction = self.wanted_direction = None
 
-        # paints the window
-        self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, BACKGROUND_COLOR)
-
-        self.player_head_pos = Vector2D[int](int(self.renderer.screen.size_x / 2), int(self.renderer.screen.size_y / 2))
-        self.player_body_pos = []
-        for segment in range(self.player_length - 1):
-            segment = self.player_length - segment - 1
-            self.player_body_pos.append(Vector2D[int](self.player_head_pos.x, (self.player_head_pos.y - segment)))
-            self.renderer.set_led(self.player_body_pos[-1].x, self.player_body_pos[-1].y, PLAYER_COLOR)
-
-        # first sets the berry
-        self.find_new_berry()
-        # fist draws the player
-        self.draw_player_head()
-        self.update_screen()
-
-    def update_screen(self):
+        # Performs first renders
+        self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
+        for vec in self.snake_body:
+            self.renderer.set_led_vector(vec, PLAYER_COLOR)
+        self.renderer.set_led_vector(self.snake_body[-1], PLAYER_COLOR_HEAD)
         self.renderer.push_leds()
 
-    def draw_player_head(self):
-        self.renderer.set_led(self.player_head_pos.x, self.player_head_pos.y, PLAYER_COLOR_HEAD)
-        self.player_body_pos.append(self.player_head_pos.copy())
+    def is_position_inside_wall(self, v: Vector2D[int]):
+        """
+        Checks and :returns: if the given position :param v: is inside a wall if the screen
+        """
 
-    def erase_player_tail(self):
-        self.renderer.set_led(self.player_head_pos.x, self.player_head_pos.y, PLAYER_COLOR)
-        player_tail_pos = self.player_body_pos[0]
-        length_difference = self.player_length - len(self.player_body_pos)
-        # if the snake is long enough, remove last pixel
-        if length_difference <= 0:
-            self.renderer.set_led_vector(player_tail_pos, BACKGROUND_COLOR)
-            self.player_body_pos.pop(0)
-        # if the snake is too short, keep last pixel
-        elif length_difference > 0:
-            pass
+        # Checks if the snake ran into a wall
+        return v.x >= self.renderer.screen.size_x or v.y >= self.renderer.screen.size_y or v.x < 0 or v.y < 0
 
-    # Returns if the players body occupies the given x/y position
-    def does_player_occupy_position(self, x, y):
-        # Iterates over every body position and checks the coords
-        for vec in self.player_body_pos:
+    def is_snake_in_position(self, x: int, y: int):
+        """
+        Checks and :returns: if the given position :param x: :param y: is also occupied by the snake
+        """
+
+        # Iterates over every body position and checks the cords
+        for vec in self.snake_body:
             if vec.x == x and vec.y == y:
                 return True
         return False
 
-    def find_new_berry(self):
+    def start_game_over_sequence(self):
+        """
+        Starts the sequence to signal a game over
+        """
+        game_end = GameEndScene(high_score=len(self.snake_body) - 3)
+        game_end.reload_scene = self
+        self.scene_controller.load_scene(game_end)
+
+    # Finds a new position for the berry
+    def reset_berry(self):
+        """
+        Resets the berry to a new possible position
+        :return:
+        """
+
+        # Firstly stores all possible positions by checking which the snake doesn't occupy
         possible_positions = [Vector2D[int]]
         for x in range(self.renderer.screen.size_x):
             for y in range(self.renderer.screen.size_y):
-                if not self.does_player_occupy_position(x, y):
+                if not self.is_snake_in_position(x, y):
                     possible_positions.append(Vector2D[int](x, y))
-        possible_positions.pop(0)
+
+        # Checks if the berry has nowhere to go
         if len(possible_positions) == 0:
-            # player is in every pixel
-            self.won_screen()
-            pass
-        else:
-            picked_position = int(random() * len(possible_positions))
-            self.berry_pos = possible_positions[picked_position]
-            self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
+            # Just moves it out of screen
+            self.berry_pos = Vector2D(-1, -1)
+            return
 
-    def won_screen(self):
-        game_end = GameEndScene()
-        game_end.reload_scene = self
-        game_end.won_game = True
-        self.scene_controller.load_scene(game_end)
-
-    def player_eats_berry(self):
-        self.player_length += 1
-
-    def berry_mechanics(self):
-        if self.berry_pos == self.player_head_pos:
-            self.player_eats_berry()
-            self.find_new_berry()
-
-    def game_over(self):
-        game_end = GameEndScene(high_score=self.player_length - PLAYER_START_LENGTH)
-        game_end.reload_scene = self
-        self.scene_controller.load_scene(game_end)
-
-    def collision_detection_self(self):
-        return self.does_player_occupy_position(self.player_head_pos.x, self.player_head_pos.y)
+        # Picks a position at random
+        self.berry_pos = possible_positions[int(random() * len(possible_positions))]
 
     def get_time_constant(self):
         return Cfg.SNAKE_SPEED
@@ -130,41 +119,68 @@ class SnakeScene(GameScene):
         if super().on_handle_loading_screen(button, status):
             return
 
-        if status:
-            # go down
-            if button == Controller.BTN_DOWN:
-                self.direction = Vector2D(0, -1)
-            # go up
-            elif button == Controller.BTN_UP:
-                self.direction = Vector2D(0, 1)
-            # go left
-            elif button == Controller.BTN_LEFT:
-                self.direction = Vector2D(-1, 0)
-            # go right
-            elif button == Controller.BTN_RIGHT:
-                self.direction = Vector2D(1, 0)
+        if not status:
+            return
+
+        # Checks if a direction button got pressed
+        new_dir = DIRECTION_BUTTON_MAPPINGS[button]
+        if new_dir is not None:
+            self.wanted_direction = new_dir
 
     def on_update(self):
-        self.__move(self.direction)
-        self.berry_mechanics()
-        self.moves += 1
-        self.update_screen()
 
-    def __move(self, dv: Vector2D):
-        # out of the screen detection
-        if self.renderer.screen.size_x > self.player_head_pos.x + dv.x >= 0 and \
-                self.renderer.screen.size_y > self.player_head_pos.y + dv.y >= 0:
-            # not running in itself
-            if self.player_head_pos.x + dv.x != self.player_body_pos[-2].x or\
-               self.player_head_pos.y + dv.y != self.player_body_pos[-2].y:
-                self.erase_player_tail()
-                self.player_head_pos = self.player_head_pos + dv
-                if self.collision_detection_self():
-                    self.game_over()
-                    return
-                self.draw_player_head()
-            else:
-                # would have run into self -> moves in the opposite as pressed direction
-                self.__move(Vector2D(-dv.x, -dv.y))
-        else:  # must be outside the borders
-            self.game_over()
+        # The update algorithm goes as follows:
+        # 0. Update direction if it doesn't lead to a game-over
+        # 1. Checks for walls
+        # 2. Checks for berry
+        # 3. If no berry found, remove last tailpiece
+        #    - If found let the piece stay
+        # 4. Check for movement into itself
+
+        # Checks if a new direction is wanted
+        if self.wanted_direction is not None:
+            # and if it makes sense (So doesn't kill the snake)
+            possible_head = self.snake_body[-1] + self.wanted_direction
+
+            if not self.is_snake_in_position(possible_head.x, possible_head.y) and \
+                    not self.is_position_inside_wall(possible_head):
+                self.direction = self.wanted_direction
+                self.wanted_direction = None
+
+        # Checks if the player hasn't started
+        if self.direction is None:
+            return
+
+        # Get the next head position
+        head: Vector2D[int] = self.snake_body[-1] + self.direction
+
+        # Checks if the snake ran into a wall
+        if self.is_position_inside_wall(head):
+            self.start_game_over_sequence()
+            return
+
+        # Checks if the berry got eaten
+        if self.berry_pos == head:
+            # Searches for a new berry
+            self.renderer.set_led_vector(self.berry_pos, BACKGROUND_COLOR)
+            self.reset_berry()
+            self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
+
+            # Doesn't remove the tail
+        else:
+            # Removes the snake body
+            self.renderer.set_led_vector(self.snake_body[0], BACKGROUND_COLOR)
+            self.snake_body.pop(0)
+
+        # Checks if the snake ran into itself
+        if self.is_snake_in_position(head.x, head.y):
+            self.start_game_over_sequence()
+            return
+
+        # Appends the new head
+        self.renderer.set_led_vector(self.snake_body[-1], PLAYER_COLOR)
+        self.snake_body.append(head)
+        self.renderer.set_led_vector(head, PLAYER_COLOR_HEAD)
+
+        # Sends the update
+        self.renderer.push_leds()

@@ -45,3 +45,7 @@ class Vector2D(Generic[T]):
 
     def copy(self):
         return Vector2D(self.x, self.y)
+
+    def copy_and_add(self, x: int = 0, y: int = 0):
+        """Copies to vector and adds the given positions to it"""
+        return Vector2D(self.x+x, self.y+y)

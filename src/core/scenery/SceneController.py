@@ -34,7 +34,8 @@ class SceneController:
         # Unit's the game
         try:
             self.scene.on_init(self, self.rdr, self.players[0], self.players[1])
-        except:
+        except Exception as e:
+            print(e)
             self.__on_scene_crash()
             return
 
@@ -55,7 +56,8 @@ class SceneController:
         # Executes the scene loop
         try:
             self.scene.on_player_input(player, button, status)
-        except:
+        except Exception as e:
+            print(e)
             self.__on_scene_crash()
             return
 
@@ -80,7 +82,8 @@ class SceneController:
             # Executes the scene loop
             try:
                 self.scene.on_update()
-            except:
+            except Exception as e:
+                print(e)
                 self.__on_scene_crash()
                 return
 
