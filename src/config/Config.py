@@ -11,6 +11,8 @@ Snake settings
 SNAKE_ENABLED = True
 SNAKE_SPEED = 0.15
 
+SNAKE_WALL_DEAD = False
+
 '''
 Tetris settings
 '''

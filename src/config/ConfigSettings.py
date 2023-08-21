@@ -15,6 +15,10 @@ def register_snake_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_title("Speed") \
         .has_description("Delay in ms between frames in snake.") \
         .and_then() \
+        .with_bool(nameof(Cfg.SNAKE_WALL_DEAD)) \
+        .has_title("Wall-Death") \
+        .has_description("If the snake dies when it walks into a wall.") \
+        .and_then() \
         .end_category()
 
 
@@ -39,7 +43,6 @@ def register_tetris_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_title("Tetris enabled") \
         .has_description("If tetris is selectable and playable.") \
         .and_then() \
- \
         .with_float(nameof(Cfg.TETRIS_SPEED)) \
         .has_min(0) \
         .has_max(1) \

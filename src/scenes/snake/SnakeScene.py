@@ -61,13 +61,28 @@ class SnakeScene(GameScene):
         self.renderer.set_led_vector(self.snake_body[-1], PLAYER_COLOR_HEAD)
         self.renderer.push_leds()
 
-    def is_position_inside_wall(self, v: Vector2D[int]):
+    def get_position_inside_wall(self, v: Vector2D[int]):
         """
         Checks and :returns: if the given position :param v: is inside a wall if the screen
         """
+        # Checks right x
+        if v.x >= self.renderer.screen.size_x:
+            return 0b00
 
-        # Checks if the snake ran into a wall
-        return v.x >= self.renderer.screen.size_x or v.y >= self.renderer.screen.size_y or v.x < 0 or v.y < 0
+        # Checks upper y
+        if v.y >= self.renderer.screen.size_y:
+            return 0b10
+
+        # Checks left x
+        if v.x < 0:
+            return 0b01
+
+        # Checks lower y
+        if v.y < 0:
+            return 0b11
+
+        # Didn't ran into a wall
+        return None
 
     def is_snake_in_position(self, x: int, y: int):
         """
@@ -123,9 +138,8 @@ class SnakeScene(GameScene):
             return
 
         # Checks if a direction button got pressed
-        new_dir = DIRECTION_BUTTON_MAPPINGS[button]
-        if new_dir is not None:
-            self.wanted_direction = new_dir
+        if button in DIRECTION_BUTTON_MAPPINGS:
+            self.wanted_direction = DIRECTION_BUTTON_MAPPINGS[button]
 
     def on_update(self):
 
@@ -142,10 +156,17 @@ class SnakeScene(GameScene):
             # and if it makes sense (So doesn't kill the snake)
             possible_head = self.snake_body[-1] + self.wanted_direction
 
-            if not self.is_snake_in_position(possible_head.x, possible_head.y) and \
-                    not self.is_position_inside_wall(possible_head):
+            would_die = self.is_snake_in_position(possible_head.x, possible_head.y)
+
+            # If the wall-death is enabled, the wall position is considered bad
+            if Cfg.SNAKE_WALL_DEAD:
+                would_die |= self.get_position_inside_wall(possible_head) is not None
+
+            if not would_die:
                 self.direction = self.wanted_direction
-                self.wanted_direction = None
+
+            # Resets the wanted direction
+            self.wanted_direction = None
 
         # Checks if the player hasn't started
         if self.direction is None:
@@ -155,9 +176,21 @@ class SnakeScene(GameScene):
         head: Vector2D[int] = self.snake_body[-1] + self.direction
 
         # Checks if the snake ran into a wall
-        if self.is_position_inside_wall(head):
-            self.start_game_over_sequence()
-            return
+        wall_pos = self.get_position_inside_wall(head)
+        if wall_pos is not None:
+
+            # If wall-death is enabled, play the death screen
+            if Cfg.SNAKE_WALL_DEAD:
+                self.start_game_over_sequence()
+                return
+
+            # Sets the head to the opposite direction
+            # Checks bit for axis (0 is x)
+            if (wall_pos >> 1) & 1 == 0:
+                # Multiples the full length to get the correct new position
+                head.x = (self.renderer.screen.size_x-1) * (wall_pos & 1)
+            else:
+                head.y = (self.renderer.screen.size_y-1) * (wall_pos & 1)
 
         # Checks if the berry got eaten
         if self.berry_pos == head:
