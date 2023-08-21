@@ -1,6 +1,7 @@
 import config.core.types.BaseVarLoader as BaseVL
 import config.core.ConfigLoader as CfgLdr
 
+
 class BoolVLBuilder(BaseVL.BaseVLBuilder):
 
     def __init__(self, back_ref: CfgLdr.CategoryBuilder, var_name: str):
@@ -8,6 +9,7 @@ class BoolVLBuilder(BaseVL.BaseVLBuilder):
 
     def export_end(self):
         return BoolVarLoader(self._var_name, self._title, self._description, self._link)
+
 
 class BoolVarLoader(BaseVL.BaseVarLoader):
 
@@ -17,9 +19,9 @@ class BoolVarLoader(BaseVL.BaseVarLoader):
     def get_type(self):
         return "bool"
 
-    def from_json(self, new_value):
+    def validate_value(self, new_value):
         # Checks type
         if not isinstance(new_value, bool):
             return False
 
-        return super().from_json(new_value)
+        return super().validate_value(new_value)

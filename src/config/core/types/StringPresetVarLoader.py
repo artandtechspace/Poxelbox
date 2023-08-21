@@ -30,7 +30,7 @@ class StringPresetVarLoader(BaseVL.BaseVarLoader):
             "presets": self.presets
         }
 
-    def from_json(self, new_value):
+    def validate_value(self, new_value):
         # Checks type
         if not isinstance(new_value, str):
             return False
@@ -39,4 +39,4 @@ class StringPresetVarLoader(BaseVL.BaseVarLoader):
         if new_value not in self.presets:
             return False
 
-        return super().from_json(new_value)
+        return super().validate_value(new_value)

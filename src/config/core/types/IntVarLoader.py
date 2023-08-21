@@ -39,7 +39,7 @@ class IntVarLoader(BaseVL.BaseVarLoader):
             "max": self.max
         }
 
-    def from_json(self, new_value):
+    def validate_value(self, new_value):
         # Checks type
         if not isinstance(new_value, int):
             return False
@@ -52,4 +52,4 @@ class IntVarLoader(BaseVL.BaseVarLoader):
         if self.max is not None and new_value > self.max:
             new_value = self.max
 
-        return super().from_json(new_value)
+        return super().validate_value(new_value)

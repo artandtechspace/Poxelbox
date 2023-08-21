@@ -17,9 +17,9 @@ class BoolVarLoader(BaseVL.BaseVarLoader):
     def get_type(self):
         return "bool"
 
-    def from_json(self, new_value):
+    def validate_value(self, new_value):
         # Checks type
         if not isinstance(new_value, bool):
             return False
 
-        return super().from_json(new_value)
+        return super().validate_value(new_value)

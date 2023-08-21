@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     import config.core.types.BoolVarLoader as BoolVL
     import config.core.types.BaseVarLoader as BaseVL
 
+
 class CategoryBuilder:
     __builders: {BaseVL.BaseVLBuilder} = {}
     __base: ConfigLoaderBuilder
@@ -72,7 +73,7 @@ class ConfigLoaderBuilder:
     __categorys: {CategoryBuilder} = {}
 
     def __init__(self):
-        self.__categorys={}
+        self.__categorys = {}
 
     def in_category(self, name: str):
         bdr = CategoryBuilder(self)
@@ -88,7 +89,6 @@ class ConfigLoaderBuilder:
             values[name] = self.__categorys[name].export_end()
 
         return ConfigLoader(values)
-
 
 
 class Category:
@@ -119,6 +119,9 @@ class Category:
         return exp
 
     def try_load_from_json(self, category_obj):
+        if not isinstance(category_obj, dict):
+            return False
+
         # Iterates over all given values
         for key in category_obj:
             # Ensures that the category exists and otherwise ignores it
@@ -127,7 +130,27 @@ class Category:
 
             # Tries to load
             # TODO: Stop ignoring errors
-            success = self.__values[key].from_json(category_obj[key])
+            success = self.__values[key].set_value(category_obj[key])
+
+    # Takes in a raw category-object and validates it's values
+    # Further the values that are missing are extended
+    # If any of the given values is invalid, false is returned and if everything worked, true
+    def validate_and_extend_json_config(self, category_obj) -> True or False:
+        if not isinstance(category_obj, dict):
+            return False
+
+        # Iterates over all values
+        for key in self.__values:
+            # Ensures that the category exists and otherwise creates it
+            if key not in category_obj:
+                category_obj[key] = self.__values[key].get_value()
+
+            # Validates the value
+            if not self.__values[key].validate_value(category_obj[key]):
+                return False
+
+        return True
+
 
 class ConfigLoader:
     # Holds all categories
@@ -135,6 +158,26 @@ class ConfigLoader:
 
     def __init__(self, values: {Category}):
         self.__categories = values
+
+    # Takes in a raw config object and validates it's values
+    # Further the values that are missing are extended
+    # If any of the given values is invalid, false is returned and if everything worked, true
+    def validate_and_extend_json_config(self, raw_json: any or dict) -> True or False:
+        if not isinstance(raw_json, dict):
+            return False
+
+            # Iterates over all given categories
+        for cat_name in self.__categories:
+            # Ensures that the category exists and otherwise creates it
+            if cat_name not in raw_json:
+                raw_json[cat_name] = {}
+
+            # Tries to load and extends that category values. If false as in "invalid config given" is returned,
+            # it is lead further up
+            if not self.__categories[cat_name].validate_and_extend_json_config(raw_json[cat_name]):
+                return False
+
+        return True
 
     # Takes in a dict or invalid tuple (Parsed from json) and tries to load all config-values from it.
     # If the given json is not a dict, this just returns false

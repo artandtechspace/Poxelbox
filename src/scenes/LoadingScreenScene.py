@@ -16,6 +16,7 @@ from scenes.snake import SnakeScene
 from scenes.tetris import TetrisScene
 from scenes.pong import PongScene
 from scenes.minesweeper.MinesweeperScene import MinesweeperScene
+import Program
 
 
 # Used to register games based on the config
@@ -83,6 +84,11 @@ class LoadingScreenScene(SceneBase):
         self.__display_image()
 
     def on_update(self):
+        # Checks if the config got updated and the program should restart
+        if Program.should_terminate_in_future.get():
+            # Stops the program
+            Program.stop()
+            return
         pass
 
     def on_player_input(self, player: Player, button: int, status: bool):

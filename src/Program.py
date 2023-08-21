@@ -1,16 +1,17 @@
+import json
+import multiprocessing
+import sys
+import time
+from multiprocessing import Process
+from os.path import exists
+
+import ProgramInfo as __ProgInfo
+import config.Config as Cfg
+import config.ConfigSettings as __CfgSettings
 import config.core.ConfigLoader as __CfgLoader
 import core.scenery.SceneController as __SceneController
 import webendpoints.Webserver as __Webserver
-import config.ConfigSettings as __CfgSettings
-import ProgramInfo as __ProgInfo
 from core.scenery.PiTestScene import PiTestScene
-from multiprocessing import Process
-import sys
-import json
-import config.Config as Cfg
-import multiprocessing
-import time
-from os.path import exists
 from scenes import LoadingScreenScene
 
 # Scene-manager
@@ -24,12 +25,21 @@ __web_server_ps: Process
 
 # Thread-safe variable to check if the program is terminated
 is_terminated = multiprocessing.Manager().Value(bool, False)
+# Thread-safe variable to check if the program should be terminated when the
+# game-logic is inside the selection-screen
+should_terminate_in_future = multiprocessing.Manager().Value(bool, False)
 
 
 # Queues the program to be stopped
 def stop():
     global is_terminated
     is_terminated.set(True)
+
+
+# Queues the program to stop when the game-logic dems the appropriate
+def preload_stop():
+    global should_terminate_in_future
+    should_terminate_in_future.set(True)
 
 
 # Kills the program and all subthreads
@@ -83,13 +93,9 @@ def initalize():
     if Cfg.IS_DEVELOPMENT_ENVIRONMENT:
         from core.rendering.renderer.PyGameRenderer import PyGameRenderer
         from core.userinput.PyGameUserInput import PyGameUserInput
-        from core.userinput.RemoteUserInput import RemoteUserInput
-        from core.rendering.renderer.RemoteRenderer import RemoteRenderer
 
         renderer = PyGameRenderer()
         input_method = PyGameUserInput()
-        """renderer = PyGameRenderer()
-        input_method = PyGameUserInput()"""
     # Pi-env
     else:
         from core.rendering.renderer.WS2812BRenderer import WS2812BRenderer
@@ -102,7 +108,7 @@ def initalize():
     if Cfg.USE_TEST_SCENE:
         scene = PiTestScene()
     else:
-        # Initalizes the load-screen
+        # Initializes the load-screen
         LoadingScreenScene.init_loading_screen()
         scene = LoadingScreenScene.LoadingScreenScene()
 

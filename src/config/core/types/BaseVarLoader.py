@@ -1,6 +1,7 @@
 import config.Config as Cfg
 import config.core.ConfigLoader as CfgLdr
 
+
 class BaseVLBuilder:
     def __init__(self, back_ref: CfgLdr.CategoryBuilder, var_name: str):
         # Reference back to the config-loader-builder
@@ -58,10 +59,21 @@ class BaseVarLoader:
     def to_json(self):
         return getattr(Cfg, self.__var_name)
 
-    # Convert a json-read-value to the actual config value and sets it
-    def from_json(self, new_value) -> bool:
-        setattr(Cfg, self.__var_name, new_value)
+    # Takes in a value and returns if that value is valid
+    def validate_value(self, new_value) -> bool:
         return True
+
+    # Takes in a value, validates it and then sets it to the config
+    # Also returns if that worked (The value was valid)
+    def set_value(self, new_value) -> bool:
+        if self.validate_value(new_value):
+            setattr(Cfg, self.__var_name, new_value)
+            return True
+        return False
+
+    # Returns the current value of the config-value
+    def get_value(self):
+        return getattr(Cfg, self.__var_name)
 
     # Used to export all settings that are required on the frontend for setup
     def export_full(self):
