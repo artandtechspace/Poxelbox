@@ -1,11 +1,11 @@
-from core.rendering.renderer.RendererBase import RendererBase
+from core.rendering.renderer.BrightnessControlledAndOptionalFadeInRenderer import BrightnessControlledAndOptionalFadeInRenderer
 import config.Config as Cfg
 
 rel_idx = lambda rel_x, rel_y: (rel_y + 4) if rel_x == 2 else \
     12 - rel_y + rel_x * (5 - 2 * rel_y) + int(rel_y < 2) * (-10 - 4 * rel_x)
 
 
-class BoxSchemaRendererBase(RendererBase):
+class BoxSchemaRendererBase(BrightnessControlledAndOptionalFadeInRenderer):
 
     def __init__(self):
         super().__init__()
@@ -40,7 +40,8 @@ class BoxSchemaRendererBase(RendererBase):
         pass
 
     def set_led(self, x: int, y: int, color: (int, int, int)):
-
+        if not super(x, y, color):
+            return
         # TODO: Implement better logging here
 
         # Ensures the position is on screen
@@ -96,3 +97,6 @@ class BoxSchemaRendererBase(RendererBase):
         if Cfg.BOX_HORIZONTAL:
             return box_offset * Cfg.PX_PER_BOX + self.__rel_idx__(y % Cfg.BOX_SIZE_X, x % Cfg.BOX_SIZE_Y)
         return box_offset * Cfg.PX_PER_BOX + self.__rel_idx__(x % Cfg.BOX_SIZE_X, y % Cfg.BOX_SIZE_Y)
+
+    def push_leds():
+        super()
