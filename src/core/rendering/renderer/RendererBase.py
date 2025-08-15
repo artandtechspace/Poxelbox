@@ -31,8 +31,8 @@ class RendererBase:
     # Screen with some properties
     screen: Screen
 
-    is_capturing_screen : bool = False
-    caputured_set_led_calls: [int] = []
+    _is_capturing_screen : bool = False
+    _caputured_set_led_calls: [int] = []
 
     def __init__(self):
         pass
@@ -74,20 +74,20 @@ class RendererBase:
     The capture ends when calling play_fade_in
     '''
     def start_capture_for_fade_in(self):
-        self.caputured_set_led_calls = []
-        self.is_capturing_screen = True
+        self._caputured_set_led_calls = []
+        self._is_capturing_screen = True
     
     '''
     Starts playback of a fade-in.
     End capture of set_led calls
     '''
     def play_fade_in(self):
-        if not (self.is_capturing_screen and self.caputured_set_led_calls):
+        if not (self._is_capturing_screen and self._caputured_set_led_calls):
             return
-        self.is_capturing_screen = False
+        self._is_capturing_screen = False
         sleep_duration = configuration.RENDERER_FADE_IN_DURATION / configuration.RENDERER_FADE_IN_FRAMES
         for i in range(configuration.RENDERER_FADE_IN_FRAMES):
-            for caputured_call in self.caputured_set_led_calls:
+            for caputured_call in self._caputured_set_led_calls:
                 self.set_led(
                         caputured_call[0],
                         caputured_call[1],
@@ -95,7 +95,7 @@ class RendererBase:
                 )
             self.push_leds()
             time.sleep(sleep_duration)
-        self.caputured_set_led_calls = []
+        self._caputured_set_led_calls = []
     
     def set_led(self, x: int, y: int, color: (int, int, int)):
         """
@@ -104,9 +104,9 @@ class RendererBase:
         if not color: # fade in abort
             return
         """
-        if self.is_capturing_screen:
+        if self._is_capturing_screen:
             # NOTE does override old capture when set_led is called on the same coordinate
-            self.caputured_set_led_calls.append((x, y, color))
+            self._caputured_set_led_calls.append((x, y, color))
             return False
         return set_color_brightness(color=color, brightness=configuration.RENDERER_BRIGHTNESS_MAXVALUE)
 
