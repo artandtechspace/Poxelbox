@@ -12,7 +12,7 @@ class configuration:
 
     # Brightness:
     # in range [0, 1] where 0 ~ black; 1 ~ unchanged color
-    RENDERER_SCALED_BRIGHTNESS_MAXVALUE: float = 1.0 # scales all colors
+    RENDERER_BRIGHTNESS_SCALED_LIMIT: float = 1.0 # scales all colors
     RENDERER_BRIGHTNESS_LIMIT: float = 0.5 # limits maximal brightness
 
 #region Helperfunctions
@@ -121,7 +121,7 @@ class RendererBase:
             self._caputured_set_led_calls.append((x, y, color))
             return False
         
-        color = set_color_brightness(color, configuration.RENDERER_SCALED_BRIGHTNESS_MAXVALUE)
+        color = set_color_brightness(color, configuration.RENDERER_BRIGHTNESS_SCALED_LIMIT)
         color = clamp_color_brightness(color, configuration.RENDERER_BRIGHTNESS_LIMIT)
         return color
         
