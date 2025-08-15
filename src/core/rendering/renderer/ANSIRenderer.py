@@ -10,6 +10,9 @@ class ANSIRenderer(RendererBase):
         sys.stdout.write("\x1b[2J\x1b[?25l")
 
     def set_led(self, x: int, y: int, color: (int, int, int)):
+        color = super(x, y, color) # brightess adjusted color
+        if not color: # fade in abort
+            return
         # Moves to the position and write the color
         sys.stdout.write(
             "\x1b[" + str(y) + ";" + str(x) + "H\x1b[48;2;" + str(color[0]) + ";" + str(color[1]) + ";" + str(

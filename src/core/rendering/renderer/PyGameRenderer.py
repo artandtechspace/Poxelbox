@@ -13,6 +13,9 @@ class PyGameRenderer(RendererBase):
         self.__window = pygame.display.set_mode((self.screen.size_x * Cfg.LED_PIXEL_SCALE, self.screen.size_y * Cfg.LED_PIXEL_SCALE))
 
     def set_led(self, x: int, y: int, color: (int, int, int)):
+        color = super(x, y, color) # brightess adjusted color
+        if not color: # fade in abort
+            return
         # Draws the rect
         pygame.draw.rect(self.__window, color, [x * Cfg.LED_PIXEL_SCALE, self.screen.size_y * Cfg.LED_PIXEL_SCALE - Cfg.LED_PIXEL_SCALE * (y + 1), Cfg.LED_PIXEL_SCALE, Cfg.LED_PIXEL_SCALE], 0)
         pass

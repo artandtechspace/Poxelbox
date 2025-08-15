@@ -1,11 +1,11 @@
-from core.rendering.renderer.BrightnessControlledAndOptionalFadeInRenderer import BrightnessControlledAndOptionalFadeInRenderer
+from core.rendering.renderer.RendererBase import RendererBase
 import config.Config as Cfg
 
 rel_idx = lambda rel_x, rel_y: (rel_y + 4) if rel_x == 2 else \
     12 - rel_y + rel_x * (5 - 2 * rel_y) + int(rel_y < 2) * (-10 - 4 * rel_x)
 
 
-class BoxSchemaRendererBase(BrightnessControlledAndOptionalFadeInRenderer):
+class BoxSchemaRendererBase(RendererBase):
 
     def __init__(self):
         super().__init__()
@@ -40,7 +40,8 @@ class BoxSchemaRendererBase(BrightnessControlledAndOptionalFadeInRenderer):
         pass
 
     def set_led(self, x: int, y: int, color: (int, int, int)):
-        if not super(x, y, color):
+        color = super(x, y, color) # brightess adjusted color
+        if not color: # fade in abort
             return
         # TODO: Implement better logging here
 

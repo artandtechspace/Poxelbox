@@ -30,6 +30,7 @@ def clamp(lower_bound, upper_bound, value):
 class RendererBase:
     # Screen with some properties
     screen: Screen
+
     is_capturing_screen : bool = False
     caputured_set_led_calls: [int] = []
 
@@ -67,10 +68,19 @@ class RendererBase:
                 if color[3] > 0:
                     self.set_led(x+x_start, img.size[1] - y - 1 + y_start, (color[0], color[1], color[2]))
 
+    '''
+    Starts the capture for a fade-in.
+    All calls to set_led will be saved and not executed.
+    The capture ends when calling play_fade_in
+    '''
     def start_capture_for_fade_in(self):
         self.caputured_set_led_calls = []
         self.is_capturing_screen = True
     
+    '''
+    Starts playback of a fade-in.
+    End capture of set_led calls
+    '''
     def play_fade_in(self):
         if not (self.is_capturing_screen and self.caputured_set_led_calls):
             return
