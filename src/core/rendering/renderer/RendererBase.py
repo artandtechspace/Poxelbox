@@ -9,8 +9,11 @@ from PIL import Image
 class configuration:
     RENDERER_FADE_IN_FRAMES: int = 30
     RENDERER_FADE_IN_DURATION: float = 1 # in seconds
+
+    # Brightness:
     # in range [0, 1] where 0 ~ black; 1 ~ unchanged color
-    RENDERER_SCALED_BRIGHTNESS_MAXVALUE: float = 0.5
+    RENDERER_SCALED_BRIGHTNESS_MAXVALUE: float = 1.0 # scales all colors
+    RENDERER_BRIGHTNESS_LIMIT: float = 0.5 # limits maximal brightness
 
 #region Helperfunctions
 @staticmethod
@@ -22,6 +25,10 @@ def set_color_brightness(color: (int, int, int), brightness: float):
     # conceptually the same as: 
     # return lerp( (0, 0, 0), color, brightness )
     return tuple( int(b * brightness) for b in color )
+
+@staticmethod
+def clamp_color_brightness(color: (int, int, int), brightness: float):
+    return tuple( int(min(b, 255 * brightness)) for b in color )
 
 @staticmethod
 def clamp(lower_bound, upper_bound, value):
@@ -110,11 +117,14 @@ class RendererBase:
             return
         """
         if self._is_capturing_screen:
-            # NOTE does override old capture when set_led is called on the same coordinate
+            # NOTE does not override old capture when set_led is called on the same coordinate
             self._caputured_set_led_calls.append((x, y, color))
             return False
-        return set_color_brightness(color=color, brightness=configuration.RENDERER_SCALED_BRIGHTNESS_MAXVALUE)
-
+        
+        color = set_color_brightness(color, configuration.RENDERER_SCALED_BRIGHTNESS_MAXVALUE)
+        color = clamp_color_brightness(color, configuration.RENDERER_BRIGHTNESS_LIMIT)
+        return color
+        
     def set_led_vector(self, vector: Vector2D[int], color):
         self.set_led(vector.x, vector.y, color)
 
