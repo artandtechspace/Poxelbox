@@ -1,6 +1,8 @@
 from core.rendering.Screen import Screen
 from core.util.Vector2D import Vector2D
 import config.Config as Cfg
+
+import time
 from PIL import Image
 
 # temp
@@ -8,7 +10,7 @@ class configuration:
     RENDERER_FADE_IN_FRAMES: int = 30
     RENDERER_FADE_IN_DURATION: float = 1 # in seconds
     # in range [0, 1] where 0 ~ black; 1 ~ unchanged color
-    RENDERER_BRIGHTNESS_MAXVALUE: float = 1.0
+    RENDERER_SCALED_BRIGHTNESS_MAXVALUE: float = 0.5
 
 #region Helperfunctions
 @staticmethod
@@ -19,7 +21,7 @@ def lerp( color_a: (int, int, int), color_b: (int, int, int), t: float ):
 def set_color_brightness(color: (int, int, int), brightness: float):
     # conceptually the same as: 
     # return lerp( (0, 0, 0), color, brightness )
-    return tuple( int(b * t) for b in color )
+    return tuple( int(b * brightness) for b in color )
 
 @staticmethod
 def clamp(lower_bound, upper_bound, value):
@@ -91,7 +93,10 @@ class RendererBase:
                 self.set_led(
                         caputured_call[0],
                         caputured_call[1],
-                        set_color_brightness(caputured_call[2], i/configuration.RENDERER_FADE_IN_FRAMES)
+                        set_color_brightness(
+                            caputured_call[2],
+                            i/configuration.RENDERER_FADE_IN_FRAMES * i/configuration.RENDERER_FADE_IN_FRAMES
+                        )
                 )
             self.push_leds()
             time.sleep(sleep_duration)
@@ -108,7 +113,7 @@ class RendererBase:
             # NOTE does override old capture when set_led is called on the same coordinate
             self._caputured_set_led_calls.append((x, y, color))
             return False
-        return set_color_brightness(color=color, brightness=configuration.RENDERER_BRIGHTNESS_MAXVALUE)
+        return set_color_brightness(color=color, brightness=configuration.RENDERER_SCALED_BRIGHTNESS_MAXVALUE)
 
     def set_led_vector(self, vector: Vector2D[int], color):
         self.set_led(vector.x, vector.y, color)
