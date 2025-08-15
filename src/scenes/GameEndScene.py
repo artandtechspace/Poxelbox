@@ -35,13 +35,12 @@ class GameEndScene(GameScene):
         super().on_init(scene_controller, renderer, player_one, player_two)
 
         self.renderer.fill(0, 0, renderer.screen.size_x, renderer.screen.size_y, Colors.OFF)
+        self.renderer.start_capture_for_fade_in()
 
         self.init_time = time.time_ns() + 1000 * DELAY_TIME
 
         # when the player(s) loose
         if not self.won_game:
-
-            self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.OFF)
             try:
                 img = Image.open("rsc//vfx//skull" + str(self.renderer.screen.size_x) + "x" + str(
                     self.renderer.screen.size_y) + ".png")
@@ -95,8 +94,8 @@ class GameEndScene(GameScene):
             except:
                 self.renderer.fill(0, 0, self.renderer.screen.size_x, self.renderer.screen.size_y, Colors.GREEN)
 
-        self.renderer.push_leds()
-
+        self.renderer.play_fade_in()
+        
     def get_time_constant(self):
         return .1
 

@@ -9,5 +9,5 @@ Todos:
     - [ ] move config to actual config
     - [ ] set up brightness-and-fade-in-config in config menu
     - [x] merge RendererBase with BrightnessControlledAndOptionalFadeInRenderer
- - [ ] add fade-in to game-over-scene
+ - [x] add fade-in to game-over-scene
 
