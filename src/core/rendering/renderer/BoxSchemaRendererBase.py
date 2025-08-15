@@ -40,7 +40,7 @@ class BoxSchemaRendererBase(RendererBase):
         pass
 
     def set_led(self, x: int, y: int, color: (int, int, int)):
-        color = super(x, y, color) # brightess adjusted color
+        color = super().set_led(x, y, color) # brightess adjusted color
         if not color: # fade in abort
             return
         # TODO: Implement better logging here

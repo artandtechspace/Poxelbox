@@ -105,7 +105,7 @@ class RendererBase:
     def set_led(self, x: int, y: int, color: (int, int, int)):
         """
         in child overrides:
-        color = super(x, y, color) # brightess adjusted color
+        color = super().set_led(x, y, color) # brightess adjusted color
         if not color: # fade in abort
             return
         """

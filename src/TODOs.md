@@ -10,5 +10,4 @@ Todos:
     - [ ] set up brightness-and-fade-in-config in config menu
     - [x] merge RendererBase with BrightnessControlledAndOptionalFadeInRenderer
  - [x] add fade-in to game-over-scene
- - [ ] fix super set_led in every renderer to super().set_led(x, y, color)
-
+ - [x] fix super set_led in every renderer to super().set_led(x, y, color)
