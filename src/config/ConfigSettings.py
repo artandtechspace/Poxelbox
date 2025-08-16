@@ -148,6 +148,38 @@ def register_settings_loader(loader: CfgLdr.ConfigLoaderBuilder):
  \
         .end_category()
 
+def register_rendering_loader(loader: CfgLdr.ConfigLoaderBuilder):
+       return loader.in_category("Rendering-Settings") \
+\
+              .with_int(nameof(Cfg.RENDERER_FADE_IN_FRAMES)) \
+              .has_min(1) \
+              .has_max(100) \
+              .has_title("Fade-in frames") \
+              .has_description("How many frames are rendered for a fade-in?") \
+              .and_then() \
+\
+              .with_float(nameof(Cfg.RENDERER_FADE_IN_DURATION)) \
+              .has_min(0) \
+              .has_max(10) \
+              .has_title("Fade-in duration") \
+              .has_description("How many seconds does a fade-in take?") \
+              .and_then() \
+\
+              .with_float(nameof(Cfg.RENDERER_BRIGHTNESS_SCALED_LIMIT)) \
+              .has_min(0) \
+              .has_max(1) \
+              .has_title("Scaled brightness limit") \
+              .has_description("What should the maximal brightness be? Affects all colors.") \
+              .and_then() \
+\
+              .with_float(nameof(Cfg.RENDERER_BRIGHTNESS_HARD_LIMIT)) \
+              .has_min(0) \
+              .has_max(1) \
+              .has_title("Hard brightness limit") \
+              .has_description("What should the maximal brightness be? Affects only colors that are brighter than this limit.") \
+              .and_then() \
+\
+              .end_category()
 
 # Event: When the config-loaders are registered
 def register_on_loader():
@@ -155,6 +187,7 @@ def register_on_loader():
 
     loader = register_settings_loader(loader)
     loader = register_box_layout(loader)
+    loader = register_rendering_loader(loader)
     loader = register_snake_loader(loader)
     loader = register_pong_loader(loader)
     loader = register_tetris_loader(loader)

@@ -5,16 +5,6 @@ import config.Config as Cfg
 import time
 from PIL import Image
 
-# temp
-class configuration:
-    RENDERER_FADE_IN_FRAMES: int = 30
-    RENDERER_FADE_IN_DURATION: float = 1 # in seconds
-
-    # Brightness:
-    # in range [0, 1] where 0 ~ black; 1 ~ unchanged color
-    RENDERER_BRIGHTNESS_SCALED_LIMIT: float = 1.0 # scales all colors
-    RENDERER_BRIGHTNESS_LIMIT: float = 0.5 # limits maximal brightness
-
 #region Helperfunctions
 @staticmethod
 def lerp( color_a: (int, int, int), color_b: (int, int, int), t: float ):
@@ -94,15 +84,15 @@ class RendererBase:
         if not (self._is_capturing_screen and self._caputured_set_led_calls):
             return
         self._is_capturing_screen = False
-        sleep_duration = configuration.RENDERER_FADE_IN_DURATION / configuration.RENDERER_FADE_IN_FRAMES
-        for i in range(configuration.RENDERER_FADE_IN_FRAMES):
+        sleep_duration = Cfg.RENDERER_FADE_IN_DURATION / Cfg.RENDERER_FADE_IN_FRAMES
+        for i in range(Cfg.RENDERER_FADE_IN_FRAMES):
             for caputured_call in self._caputured_set_led_calls:
                 self.set_led(
                         caputured_call[0],
                         caputured_call[1],
                         set_color_brightness(
                             caputured_call[2],
-                            i/configuration.RENDERER_FADE_IN_FRAMES * i/configuration.RENDERER_FADE_IN_FRAMES
+                            i/Cfg.RENDERER_FADE_IN_FRAMES * i/Cfg.RENDERER_FADE_IN_FRAMES
                         )
                 )
             self.push_leds()
@@ -121,8 +111,8 @@ class RendererBase:
             self._caputured_set_led_calls.append((x, y, color))
             return False
         
-        color = set_color_brightness(color, configuration.RENDERER_BRIGHTNESS_SCALED_LIMIT)
-        color = clamp_color_brightness(color, configuration.RENDERER_BRIGHTNESS_LIMIT)
+        color = set_color_brightness(color, Cfg.RENDERER_BRIGHTNESS_SCALED_LIMIT)
+        color = clamp_color_brightness(color, Cfg.RENDERER_BRIGHTNESS_HARD_LIMIT)
         return color
         
     def set_led_vector(self, vector: Vector2D[int], color):

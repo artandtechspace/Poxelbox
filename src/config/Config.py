@@ -40,6 +40,16 @@ Pong settings
 PONG_ENABLED = True
 PONG_SPEED = 0.1
 
+'''
+Rendering settings
+'''
+RENDERER_FADE_IN_FRAMES: int = 30
+RENDERER_FADE_IN_DURATION: float = 1 # in seconds
+# Brightness:
+# in range [0, 1] where 0 ~ black; 1 ~ unchanged color
+RENDERER_BRIGHTNESS_SCALED_LIMIT: float = 0.5 # scales all colors
+RENDERER_BRIGHTNESS_HARD_LIMIT: float = 1.0 # limits maximal brightness
+
 
 # How many screen-pixels one poxel-pixel takes up on the pygame-renderer
 LED_PIXEL_SCALE = 30
