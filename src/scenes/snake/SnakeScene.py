@@ -144,7 +144,7 @@ class SnakeScene(GameScene):
 
     def is_direction_change_valid(self) -> bool:
         # if the entered direction is opposite to the current direction
-        if self.entered_direction + self.direction == Vector2D[int](0, 0):
+        if (not self.direction is None) and self.entered_direction + self.direction == Vector2D[int](0, 0):
             # would instantly run into itself otherwise
             return False
         
@@ -210,7 +210,6 @@ class SnakeScene(GameScene):
             # Searches for a new berry
             self.renderer.set_led_vector(self.berry_pos, BACKGROUND_COLOR)
             self.reset_berry()
-            # BUG self.berry_pos can be invalid here
             self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
 
             # Doesn't remove the tail
@@ -221,11 +220,6 @@ class SnakeScene(GameScene):
 
         # Checks if the snake ran into itself
         if self.is_snake_in_position(head.x, head.y):
-            # This causes a BUG
-            # One the first frame after wrapping around the screen
-            # if you input to go in the opposite direction, you
-            # wrap around again to the othere side and collide with
-            # the rest of the snake body
             self.start_game_over_sequence()
             return
 
