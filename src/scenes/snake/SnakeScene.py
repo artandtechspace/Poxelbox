@@ -99,6 +99,7 @@ class SnakeScene(GameScene):
         """
         Starts the sequence to signal a game over
         """
+        # BUG high_score can be negative
         game_end = GameEndScene(high_score=len(self.snake_body) - 3)
         game_end.reload_scene = self
         self.scene_controller.load_scene(game_end)
@@ -120,7 +121,7 @@ class SnakeScene(GameScene):
         # Checks if the berry has nowhere to go
         if len(possible_positions) == 0:
             # Just moves it out of screen
-            self.berry_pos = Vector2D(-1, -1)
+            self.berry_pos = Vector2D[int](-1, -1)
             return
 
         # Picks a position at random
@@ -156,11 +157,15 @@ class SnakeScene(GameScene):
             # and if it makes sense (So doesn't kill the snake)
             possible_head = self.snake_body[-1] + self.wanted_direction
 
+            # BUG possible_head can go outside of the screen
+            # TODO only check for last segments i guess (make this a setting (accesability))
             would_die = self.is_snake_in_position(possible_head.x, possible_head.y)
 
             # If the wall-death is enabled, the wall position is considered bad
             if Cfg.SNAKE_WALL_DEAD:
-                would_die |= self.get_position_inside_wall(possible_head) is not None
+                #would_die |= self.get_position_inside_wall(possible_head) is not None
+                #would_die = would_die or not self.get_position_inside_wall(possible_head) is None
+                would_die = would_die or self.get_position_inside_wall(possible_head)
 
             if not would_die:
                 self.direction = self.wanted_direction
@@ -197,6 +202,7 @@ class SnakeScene(GameScene):
             # Searches for a new berry
             self.renderer.set_led_vector(self.berry_pos, BACKGROUND_COLOR)
             self.reset_berry()
+            # BUG self.berry_pos can be invalid here
             self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
 
             # Doesn't remove the tail
@@ -207,6 +213,11 @@ class SnakeScene(GameScene):
 
         # Checks if the snake ran into itself
         if self.is_snake_in_position(head.x, head.y):
+            # This causes a BUG
+            # One the first frame after wrapping around the screen
+            # if you input to go in the opposite direction, you
+            # wrap around again to the othere side and collide with
+            # the rest of the snake body
             self.start_game_over_sequence()
             return
 
