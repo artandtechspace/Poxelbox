@@ -33,7 +33,7 @@ class SnakeScene(GameScene):
     # Vector for the move direction of the snake
     direction: Vector2D[int] | None
     # Vector for the wanted next position of the snake
-    wanted_direction: Vector2D[int] | None
+    entered_direction: Vector2D[int] | None
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):
@@ -52,7 +52,7 @@ class SnakeScene(GameScene):
         # Finds the first berry pos
         self.reset_berry()
         # Sets the initial direction
-        self.direction = self.wanted_direction = None
+        self.direction = self.entered_direction = None
 
         # Performs first renders
         self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
@@ -140,7 +140,7 @@ class SnakeScene(GameScene):
 
         # Checks if a direction button got pressed
         if button in DIRECTION_BUTTON_MAPPINGS:
-            self.wanted_direction = DIRECTION_BUTTON_MAPPINGS[button]
+            self.entered_direction = DIRECTION_BUTTON_MAPPINGS[button]
 
     def on_update(self):
 
@@ -152,26 +152,32 @@ class SnakeScene(GameScene):
         #    - If found let the piece stay
         # 4. Check for movement into itself
 
-        # Checks if a new direction is wanted
-        if self.wanted_direction is not None:
-            # and if it makes sense (So doesn't kill the snake)
-            possible_head = self.snake_body[-1] + self.wanted_direction
+        # Checks if a direction change is enterd
+        if self.entered_direction:
+            valid_diretion_change = True
+
+            # if the entered direction is opposite to the current direction
+            if self.entered_direction + self.direction == Vector2D[int](0, 0):
+                # would instantly run into itself otherwise
+                valid_diretion_change = False
+
+            possible_head = self.snake_body[-1] + self.entered_direction
 
             # BUG possible_head can go outside of the screen
             # TODO only check for last segments i guess (make this a setting (accesability))
-            would_die = self.is_snake_in_position(possible_head.x, possible_head.y)
+            if self.is_snake_in_position(possible_head.x, possible_head.y):
+                valid_diretion_change = False
 
-            # If the wall-death is enabled, the wall position is considered bad
-            if Cfg.SNAKE_WALL_DEAD:
-                #would_die |= self.get_position_inside_wall(possible_head) is not None
-                #would_die = would_die or not self.get_position_inside_wall(possible_head) is None
-                would_die = would_die or self.get_position_inside_wall(possible_head)
+            # If the wall-death is enabled, does not allow to a direction change 
+            # that collides directly with the wall
+            if Cfg.SNAKE_WALL_DEAD and self.get_position_inside_wall(possible_head):
+                valid_diretion_change = False
 
-            if not would_die:
-                self.direction = self.wanted_direction
+            if valid_diretion_change:
+                self.direction = self.entered_direction
 
             # Resets the wanted direction
-            self.wanted_direction = None
+            self.entered_direction = None
 
         # Checks if the player hasn't started
         if self.direction is None:
