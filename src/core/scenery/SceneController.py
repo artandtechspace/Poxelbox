@@ -83,6 +83,8 @@ class SceneController:
             try:
                 self.scene.on_update()
             except Exception as e:
+                import traceback
+                print(traceback.format_exc())
                 print(e)
                 self.__on_scene_crash()
                 return
