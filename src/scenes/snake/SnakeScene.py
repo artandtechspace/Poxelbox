@@ -142,6 +142,26 @@ class SnakeScene(GameScene):
         if button in DIRECTION_BUTTON_MAPPINGS:
             self.entered_direction = DIRECTION_BUTTON_MAPPINGS[button]
 
+    def is_direction_change_valid(self) -> bool:
+        # if the entered direction is opposite to the current direction
+        if self.entered_direction + self.direction == Vector2D[int](0, 0):
+            # would instantly run into itself otherwise
+            return False
+        
+        possible_head = self.snake_body[-1] + self.entered_direction
+
+        # BUG possible_head can go outside of the screen
+        # TODO only check for last segments i guess (make this a setting (accesability))
+        if self.is_snake_in_position(possible_head.x, possible_head.y):
+            return False
+
+        # If the wall-death is enabled, does not allow to a direction change 
+        # that collides directly with the wall
+        if Cfg.SNAKE_WALL_DEAD and self.get_position_inside_wall(possible_head):
+            return False
+        
+        return True
+
     def on_update(self):
 
         # The update algorithm goes as follows:
@@ -154,26 +174,8 @@ class SnakeScene(GameScene):
 
         # Checks if a direction change is enterd
         if self.entered_direction:
-            valid_diretion_change = True
 
-            # if the entered direction is opposite to the current direction
-            if self.entered_direction + self.direction == Vector2D[int](0, 0):
-                # would instantly run into itself otherwise
-                valid_diretion_change = False
-
-            possible_head = self.snake_body[-1] + self.entered_direction
-
-            # BUG possible_head can go outside of the screen
-            # TODO only check for last segments i guess (make this a setting (accesability))
-            if self.is_snake_in_position(possible_head.x, possible_head.y):
-                valid_diretion_change = False
-
-            # If the wall-death is enabled, does not allow to a direction change 
-            # that collides directly with the wall
-            if Cfg.SNAKE_WALL_DEAD and self.get_position_inside_wall(possible_head):
-                valid_diretion_change = False
-
-            if valid_diretion_change:
+            if self.is_direction_change_valid():
                 self.direction = self.entered_direction
 
             # Resets the wanted direction
