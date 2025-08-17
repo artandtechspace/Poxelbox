@@ -24,6 +24,8 @@ DIRECTION_BUTTON_MAPPINGS = {
 
 
 class SnakeScene(GameScene):
+    time_until_next_frame: float
+
     # Array with positions that the snake occupies
     snake_body: [Vector2D[int]]
 
@@ -39,6 +41,7 @@ class SnakeScene(GameScene):
                 player_two: Player):
         super().on_init(scene_controller, renderer, player_one, player_two)
         self.scene_controller = scene_controller
+        self.time_until_next_frame = Cfg.SNAKE_SPEED
 
         # Start head position of the snake
         start = Vector2D[int](int(self.renderer.screen.size_x / 2), int(self.renderer.screen.size_y / 2))
@@ -112,7 +115,7 @@ class SnakeScene(GameScene):
         """
 
         # Firstly stores all possible positions by checking which the snake doesn't occupy
-        possible_positions = [Vector2D[int]]
+        possible_positions = []
         for x in range(self.renderer.screen.size_x):
             for y in range(self.renderer.screen.size_y):
                 if not self.is_snake_in_position(x, y):
@@ -128,7 +131,7 @@ class SnakeScene(GameScene):
         self.berry_pos = possible_positions[int(random() * len(possible_positions))]
 
     def get_time_constant(self):
-        return Cfg.SNAKE_SPEED
+        return self.time_until_next_frame
 
     def on_player_input(self, player: Player, button: int, status: bool):
         # Handles the loading screen
@@ -206,15 +209,24 @@ class SnakeScene(GameScene):
                 head.y = (self.renderer.screen.size_y-1) * (wall_pos & 1)
 
         # Checks if the berry got eaten
+        # if so spawn a new berry (and do not move remove the last pixel)
+        # else remove the last pixel of the snake to appear moving
         if self.berry_pos == head:
             # Searches for a new berry
-            self.renderer.set_led_vector(self.berry_pos, BACKGROUND_COLOR)
+            self.renderer.set_led_vector(self.berry_pos, BACKGROUND_COLOR) # redunant
             self.reset_berry()
             self.renderer.set_led_vector(self.berry_pos, BERRY_COLOR)
 
+            # game speed-up
+            if Cfg.SNAKE_SPEED_INCREASE:
+                # just a lerp from the SNAKE_SPEED to 0.05 (the shortest time possible, and all actual speeds are multiples of the 0.05)
+                # based on how close the player is to winning (having the snake take up the every pixel of the screen)
+                t = (len(self.snake_body) - 3) / (self.renderer.screen.size_x * self.renderer.screen.size_y - 3)
+                self.time_until_next_frame = Cfg.SNAKE_SPEED * (1-t) + 0.05 * t
+                
             # Doesn't remove the tail
         else:
-            # Removes the snake body
+            # Removes the snakes tail
             self.renderer.set_led_vector(self.snake_body[0], BACKGROUND_COLOR)
             self.snake_body.pop(0)
 

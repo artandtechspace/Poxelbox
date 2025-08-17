@@ -15,6 +15,10 @@ def register_snake_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_title("Speed") \
         .has_description("Delay in ms between frames in snake.") \
         .and_then() \
+        .with_bool(nameof(Cfg.SNAKE_SPEED_INCREASE)) \
+        .has_title("Speed increase") \
+        .has_description("Should the game speed increases with the score?") \
+        .and_then() \
         .with_bool(nameof(Cfg.SNAKE_WALL_DEAD)) \
         .has_title("Wall-Death") \
         .has_description("If the snake dies when it walks into a wall.") \
