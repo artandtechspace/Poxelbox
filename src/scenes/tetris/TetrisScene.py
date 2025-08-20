@@ -120,8 +120,15 @@ class TetrisScene(GameScene):
     # Pseudo-Randomly generates a new block from the tetris-previews
     def generate_new_block(self):
         self.spawn_counter = 2
+
+        # somewhat close to the original implementation; see: https://meatfighter.com/nintendotetrisai/#The_Mechanics_of_Nintendo_Tetris
+        new_block_id = random.randint(0, len(DEFINED_SHAPES))
+        if new_block_id == len(DEFINED_SHAPES) \
+                or self.current_block.shape_id == new_block_id:
+            new_block_id = random.randint(0, len(DEFINED_SHAPES) - 1)
+
         self.current_block = Block(
-            random.randint(0, len(DEFINED_SHAPES) - 1),
+            new_block_id,
             int(self.renderer.screen.size_x / 2),
             self.renderer.screen.size_y
         )

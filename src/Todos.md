@@ -1,5 +1,5 @@
 smol Todos:
-- [ ] change block generation in Tetris
+- [x] change block generation in Tetris
 
 Longterm Todos:
 - [ ] add blend mode to rendering
