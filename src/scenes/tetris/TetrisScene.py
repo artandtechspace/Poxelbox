@@ -67,7 +67,8 @@ class TetrisScene(GameScene):
                 return
             if Cfg.TETRIS_SPEED_INCREASE > 0:
                 self.time_until_next_frame = Cfg.TETRIS_SPEED * (1/2 ** (self.score/Cfg.TETRIS_SPEED_INCREASE))
-            self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
+            if TETRIS_DISPLAY_BLOCK_SHADOW:
+                self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
             self.current_block.display(self.renderer)
         self.renderer.push_leds()
 
@@ -261,7 +262,8 @@ class TetrisScene(GameScene):
 
     def move_block(self, dx: int, dy: int):
         # Erases the shadow and block from the renderer
-        self.current_block.display_shadow(self.renderer, self.get_lowest_block_position(), True)
+        if TETRIS_DISPLAY_BLOCK_SHADOW:
+            self.current_block.display_shadow(self.renderer, self.get_lowest_block_position(), True)
         self.current_block.display(self.renderer, True)
 
         # Moves the piece
@@ -269,5 +271,6 @@ class TetrisScene(GameScene):
         self.current_block.position.y += dy
 
         # Renders the shadow and block
-        self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
+        if TETRIS_DISPLAY_BLOCK_SHADOW:
+            self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
         self.current_block.display(self.renderer)

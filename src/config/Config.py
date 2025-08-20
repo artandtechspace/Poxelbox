@@ -24,6 +24,7 @@ TETRIS_SPEED = 0.2
 # 0 : speed increase disabled 
 TETRIS_SPEED_INCREASE = 60
 TETRIS_SHOW_SCORE = True
+TETRIS_DISPLAY_BLOCK_SHADOW = True
 
 '''
 Minesweeper settings

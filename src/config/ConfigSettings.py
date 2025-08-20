@@ -63,6 +63,10 @@ def register_tetris_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_title("Show score") \
         .has_description("If tetris displays scores on game over.") \
         .and_then() \
+        .with_bool(nameof(Cfg.TETRIS_DISPLAY_BLOCK_SHADOW)) \
+        .has_title("Display block shadows") \
+        .has_description("If tetris shows a shadow where the block will land.") \
+        .and_then() \
         .end_category()
 
 
