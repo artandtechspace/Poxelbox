@@ -35,7 +35,10 @@ class SceneController:
         try:
             self.scene.on_init(self, self.rdr, self.players[0], self.players[1])
         except Exception as e:
+            import traceback
             print(e)
+            traceback.print_exc()
+            
             self.__on_scene_crash()
             return
 
