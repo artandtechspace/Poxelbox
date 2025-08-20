@@ -53,6 +53,16 @@ def register_tetris_loader(loader: CfgLdr.ConfigLoaderBuilder):
         .has_title("Speed") \
         .has_description("Delay in ms between frames in tetris.") \
         .and_then() \
+        .with_float(nameof(Cfg.TETRIS_SPEED_INCREASE)) \
+        .has_min(0) \
+        .has_max(200) \
+        .has_title("Speed increase") \
+        .has_description("Speed increases as exponentail decay based on score, this value is used as its half life. 0 and negative values disable the speed increase.") \
+        .and_then() \
+        .with_bool(nameof(Cfg.TETRIS_SHOW_SCORE)) \
+        .has_title("Show score") \
+        .has_description("If tetris displays scores on game over.") \
+        .and_then() \
         .end_category()
 
 

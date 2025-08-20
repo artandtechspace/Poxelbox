@@ -19,6 +19,11 @@ Tetris settings
 '''
 TETRIS_ENABLED = True
 TETRIS_SPEED = 0.2
+# exponentail decay based on score
+# TETRIS_SPEED_INCREASE is used as half life
+# 0 : speed increase disabled 
+TETRIS_SPEED_INCREASE = 60
+TETRIS_SHOW_SCORE = True
 
 '''
 Minesweeper settings

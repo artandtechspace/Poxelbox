@@ -25,8 +25,8 @@ class TetrisScene(GameScene):
     game_field: [[int]]
     # Block that the player is holding
     current_block: Block
-    # Node: Unused, theoretically a way to make the game faster
-    game_speed: float
+    # value for get_time_constant
+    time_until_next_frame: float
     # Used to give the player time after a respawn to move the block before the next game-tick
     spawn_counter: int
     # Flag used to prevent the player from moving already dropped pieces between ticks
@@ -42,7 +42,7 @@ class TetrisScene(GameScene):
         self.score = 0
 
     def get_time_constant(self):
-        return Cfg.TETRIS_SPEED  # NOTE: Maybe change to self.game_speed
+        return self.time_until_next_frame
 
     def on_update(self):
 
@@ -65,8 +65,8 @@ class TetrisScene(GameScene):
             if self.can_block_be_moved_to(self.current_block.position.x, self.current_block.position.y) != NO_COLLISION:
                 self.game_over()
                 return
-
-            self.game_speed = self.game_speed / 2
+            if Cfg.TETRIS_SPEED_INCREASE > 0:
+                self.time_until_next_frame = Cfg.TETRIS_SPEED * (1/2 ** (self.score/Cfg.TETRIS_SPEED_INCREASE))
             self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
             self.current_block.display(self.renderer)
         self.renderer.push_leds()
@@ -110,7 +110,8 @@ class TetrisScene(GameScene):
     def reset_game(self):
         self.game_field = [[-1 for x in range(self.renderer.screen.size_x)] for y in range(self.renderer.screen.size_y)]
         self.generate_new_block()
-        self.game_speed = 0.1
+        self.game_speed = Cfg.TETRIS_SPEED
+        self.score = 0
 
         # Renders the new block
         self.move_block(0, 0)
@@ -226,7 +227,9 @@ class TetrisScene(GameScene):
 
         # Checks if there were any changes
         if amt > 0:
-            self.score += 2 * amt - 1
+            # nes tetris scoring: 4 10   30   120
+            #     scaled scoring: 1  2,5  7,5  20
+            self.score += (1, 2.5, 7.5, 20)[amt-1] 
             # Rerenders the whole game-grid
             for y in range(self.renderer.screen.size_y):
                 for x in range(self.renderer.screen.size_x):
@@ -249,7 +252,10 @@ class TetrisScene(GameScene):
 
     # Executes once the game is game over for the player
     def game_over(self):
-        game_end = GameEndScene(high_score=self.score)
+        if Cfg.TETRIS_SHOW_SCORE:
+            game_end = GameEndScene(high_score=self.score) 
+        else:
+            game_end = GameEndScene()
         game_end.reload_scene = self
         self.scene_controller.load_scene(game_end)
 
