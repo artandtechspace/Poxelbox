@@ -13,8 +13,11 @@ class SerialEspUserInput(BaseUserInput):
 
     # Returns all usb-ports with connected devices
     def __get_ports(self):
+        all = []
         # Note: that this only works on Linux (Raspberry Pi)
-        return glob.glob("/dev/ttyUSB*")
+        all += glob.glob("/dev/ttyUSB*")
+        all += glob.glob("/dev/ttyACM*")
+        return all
 
     # Opens the port
     def __open_port(self):
