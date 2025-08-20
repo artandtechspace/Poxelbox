@@ -23,6 +23,8 @@ class GameEndScene(GameScene):
     # only used to set an optional high score
     def __init__(self, high_score=None):
         if high_score:
+            if type(high_score) == float:
+                high_score = int(high_score)
             if type(high_score) != int:
                 raise ValueError("non integer numbers are not supported yet")
             if high_score < 0:

@@ -18,7 +18,7 @@ SNAKE_WALL_DEAD = False
 Tetris settings
 '''
 TETRIS_ENABLED = True
-TETRIS_SPEED = 0.2
+TETRIS_SPEED = 0.3
 # exponentail decay based on score
 # TETRIS_SPEED_INCREASE is used as half life
 # 0 : speed increase disabled 
