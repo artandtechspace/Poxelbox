@@ -5,6 +5,7 @@ from multiprocessing import Process
 import ProgramInfo as __ProgInfo
 import os.path
 import json
+import subprocess
 
 # The flash-rest-api
 app = Flask("Poxelbox-Configuration-API")
@@ -79,8 +80,8 @@ def __push_view():
 
     resp = Response("Success", 200)
     resp.headers['Access-Control-Allow-Origin'] = '*'
-
-    Program.preload_stop()
+    subprocess.Popen("service Poxelbox restart", shell=True)
+    #Program.preload_stop()
 
     return resp
 
