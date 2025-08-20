@@ -53,6 +53,48 @@ class AstroidsScene(GameScene):
                 self.bullets.append(Particle(self.player_pos, Vector2D(cos(self.player_dir), sin(self.player_dir))))
             if button == Keys.ARROW_KEYS:
                 pass  # TODO: how to aim?
+                """
+                Maybe rotating the ship + moving forward
+                like:
+                right -> turn lefthanded  (clockwise)
+                left  -> turn righthanded (counter-clockwise)
+                up    -> move forwards
+                probably also:
+                down  -> move backwards
+                Its defenetly not easy to control, but should work and is conceptually similar to driving a car i guess
+                
+                Maybe
+                right -> move 1px forwards + 1px to the right + turn lefthanded  (clockwise)
+                left  -> move 1px forwards + 1px to the left  + turn righthanded (counter-clockwise)
+                up    -> move 1px forwards
+                down  -> move 1px backwards
+
+                ██ ██ ██
+                   🚀 
+                   ██
+                and (just imagine these blocks align)
+                   ██ ██
+                   🚀 ██
+                ██
+                using WASD as arrowkeys
+                A  W  D
+                   🚀 
+                   S
+                and (just imagine these align)
+                   A  W
+                   🚀 D
+                S
+
+                And shooting in the W direction
+
+                Or with a stationary player:
+                have a ring around the player
+                where one pixel is highlighted as the selected target
+                at which when u shot a bomb or similar exlpodes, like a AOE attack
+
+                And let the player move around the selected target freely in that circle
+                maybe using polar coordinates / control sceme for that 
+                """
 
     def on_update(self):
         clc_time = time.perf_counter()
@@ -85,9 +127,9 @@ class AstroidsScene(GameScene):
 
             self.renderer.set_led_vector(ast.pos, ASTROID_COLOR)
 
-            # collision detection
+            # collision handeling
             for bul in self.bullets:
-                self.collision_detection(ast, bul)
+                self.collision_handeling(ast, bul)
 
     def bullet_movement(self):
         for bul in self.bullets:
@@ -102,11 +144,11 @@ class AstroidsScene(GameScene):
 
             self.renderer.set_led_vector(bul.pos, BULLET_COLOR)
 
-            # collision detection
+            # collision handeling
             for ast in self.astroids:
-                self.collision_detection(ast, bul)
+                self.collision_handeling(ast, bul)
 
-    def collision_detection(self, t_ast: Particle, t_bul: Particle):
+    def collision_handeling(self, t_ast: Particle, t_bul: Particle):
         if t_ast.pos == t_bul.pos:
             self.bullets.remove(t_bul)
             self.astroids.remove(t_ast)
