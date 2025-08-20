@@ -1,3 +1,6 @@
+smol Todos:
+- [ ] change block generation in Tetris
+
 Longterm Todos:
 - [ ] add blend mode to rendering
 - [ ] refactor code to use color class
