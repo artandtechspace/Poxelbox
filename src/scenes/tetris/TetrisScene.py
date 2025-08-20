@@ -24,7 +24,7 @@ class TetrisScene(GameScene):
     # Grid with the game_field
     game_field: [[int]]
     # Block that the player is holding
-    current_block: Block
+    current_block: Block = None
     # value for get_time_constant
     time_until_next_frame: float
     # Used to give the player time after a respawn to move the block before the next game-tick
@@ -124,7 +124,7 @@ class TetrisScene(GameScene):
         # somewhat close to the original implementation; see: https://meatfighter.com/nintendotetrisai/#The_Mechanics_of_Nintendo_Tetris
         new_block_id = random.randint(0, len(DEFINED_SHAPES))
         if new_block_id == len(DEFINED_SHAPES) \
-                or self.current_block.shape_id == new_block_id:
+                or (self.current_block and self.current_block.shape_id == new_block_id):
             new_block_id = random.randint(0, len(DEFINED_SHAPES) - 1)
 
         self.current_block = Block(
@@ -205,7 +205,8 @@ class TetrisScene(GameScene):
         self.current_block.rotate_block(not turn_left)
 
         # Un-renders
-        self.current_block.display_shadow(self.renderer, self.get_lowest_block_position(), True)
+        if Cfg.TETRIS_DISPLAY_BLOCK_SHADOW:
+            self.current_block.display_shadow(self.renderer, self.get_lowest_block_position(), True)
         self.current_block.display(self.renderer, True)
 
         # Rotates
@@ -215,7 +216,8 @@ class TetrisScene(GameScene):
         self.current_block.position.x += move_direction
 
         # Re-renders
-        self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
+        if Cfg.TETRIS_DISPLAY_BLOCK_SHADOW:
+            self.current_block.display_shadow(self.renderer, self.get_lowest_block_position())
         self.current_block.display(self.renderer)
 
         return True
