@@ -41,6 +41,9 @@ class FloatVarLoader(BaseVL.BaseVarLoader):
         }
 
     def validate_value(self, new_value):
+        if isinstance(new_value, int):
+            new_value = float(new_value)
+
         # Checks type
         if not isinstance(new_value, float):
             return False
