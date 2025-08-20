@@ -33,9 +33,9 @@ class SnakeScene(GameScene):
     berry_pos: Vector2D[int]
 
     # Vector for the move direction of the snake
-    direction: Vector2D[int] | None
+    direction: Vector2D[int] or None
     # Vector for the wanted next position of the snake
-    entered_direction: Vector2D[int] | None
+    entered_direction: Vector2D[int] or None
 
     def on_init(self, scene_controller: SceneController, renderer: RendererBase, player_one: Player,
                 player_two: Player):

@@ -5,27 +5,6 @@ import config.Config as Cfg
 import time
 from PIL import Image
 
-#region Helperfunctions
-@staticmethod
-def lerp( color_a: (int, int, int), color_b: (int, int, int), t: float ):
-    return tuple( int(a * (1-t) + b * t) for a, b in zip(color_a, color_b) )
-
-@staticmethod
-def set_color_brightness(color: (int, int, int), brightness: float):
-    # conceptually the same as: 
-    # return lerp( (0, 0, 0), color, brightness )
-    return tuple( int(b * brightness) for b in color )
-
-@staticmethod
-def clamp_color_brightness(color: (int, int, int), brightness: float):
-    return tuple( int(min(b, 255 * brightness)) for b in color )
-
-@staticmethod
-def clamp(lower_bound, upper_bound, value):
-    return min( lower_bound, max(upper_bound, value))
-#endregion
-
-
 class RendererBase:
     # Screen with some properties
     screen: Screen
@@ -90,7 +69,7 @@ class RendererBase:
                 self.set_led(
                         caputured_call[0],
                         caputured_call[1],
-                        set_color_brightness(
+                        self.set_color_brightness(
                             caputured_call[2],
                             i/Cfg.RENDERER_FADE_IN_FRAMES * i/Cfg.RENDERER_FADE_IN_FRAMES
                         )
@@ -111,8 +90,8 @@ class RendererBase:
             self._caputured_set_led_calls.append((x, y, color))
             return False
         
-        color = set_color_brightness(color, Cfg.RENDERER_BRIGHTNESS_SCALED_LIMIT)
-        color = clamp_color_brightness(color, Cfg.RENDERER_BRIGHTNESS_HARD_LIMIT)
+        color = self.set_color_brightness(color, Cfg.RENDERER_BRIGHTNESS_SCALED_LIMIT)
+        color = self.clamp_color_brightness(color, Cfg.RENDERER_BRIGHTNESS_HARD_LIMIT)
         return color
         
     def set_led_vector(self, vector: Vector2D[int], color):
@@ -120,3 +99,13 @@ class RendererBase:
 
     def push_leds(self):
         pass
+
+    @staticmethod
+    def set_color_brightness(color: (int, int, int), brightness: float):
+        # conceptually the same as: 
+        # return lerp( (0, 0, 0), color, brightness )
+        return tuple( int(b * brightness) for b in color )
+
+    @staticmethod
+    def clamp_color_brightness(color: (int, int, int), brightness: float):
+        return tuple( int(min(b, 255 * brightness)) for b in color )
